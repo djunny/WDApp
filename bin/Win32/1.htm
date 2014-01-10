@@ -1,0 +1,21 @@
+<html>
+<head>
+<title>123</title>
+</head>
+<body>
+<script>
+var a = '1';
+function call(){
+		
+	window.app.call2(function(window){
+		return(window.document.title);
+	})
+	alert(window.app.call(function(window){
+		return(window.document.title);
+	}));
+	
+}
+</script>
+<button onclick="call()">call</button>
+</body>
+</html>
