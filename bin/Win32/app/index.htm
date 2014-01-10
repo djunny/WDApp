@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>123</title>
+<style>
+@import 'https://gist.github.com/jambu/2004633/raw/9203a99c68b2e7370407e87c057cc6650da2dc4e/gmail-scrollbars.css';
+html{overflow:auto}
+div{background:#000;-webkit-border-radius:30px;height:100px;width:100px;}
+</style>
+<script src="http://codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+<script>
+var a = '1';
+function call(){
+	window.app.call2(function(window){
+		return(window.document.title);
+	});
+	alert(window.app.call(function(window){
+		return(window.document.title);
+	}));
+	//
+}
+function move(){
+	window.app.windowMove()
+}
+function get(){
+	$.ajaxSetup({
+	  beforeSend: function(request) {
+	      console.log(request);
+	      request.setRequestHeader("User-Agent","InsertUserAgentStringHere");
+	  }
+	});
+	$.ajax({
+                type: "GET",
+                url: "http://www.baidu.com/",
+                success: function (result) {
+                    $('#html').val(result);
+                }
+            });
+}
+</script>
+
+<Div>
+<button onclick="call()">call</button>
+<Br>
+<button onmousedown="move()">move</button>
+<Br>
+<button onmousedown="get()">get</button>
+<Br>
+<button onclick="document.location.reload()">refresh</button>
+<Br>
+<a href="http://www.google.com/">google</a>
+</div><Br>
+<textarea id="html"></textarea>
+<div style="height:10000px" onmousedown="move()"></div>
+</body>
+</html>

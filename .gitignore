@@ -1,2 +1,5 @@
 /src/__history
 *.dcu
+__history
+*.dpr*
+*.identcache

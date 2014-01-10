@@ -22,6 +22,8 @@ unit cefvcl;
 
 {$I cef.inc}
 
+{$UNDEF DELPHI14_UP}
+
 interface
 uses
   Windows, Messages, Classes,
@@ -716,6 +718,7 @@ begin
     info.y := rect.top;
     info.Width := rect.right - rect.left;
     info.Height := rect.bottom - rect.top;
+    info.transparent_painting := true;
     FillChar(settings, SizeOf(TCefBrowserSettings), 0);
     settings.size := SizeOf(TCefBrowserSettings);
     GetSettings(settings);

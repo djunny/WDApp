@@ -14,6 +14,11 @@
  * Group      : http://groups.google.com/group/delphichromiumembedded
  *)
 
+{$IF CompilerVersion >= 21.0}
+  {$WEAKLINKRTTI ON}
+  {$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$IFEND}
+
  {.$define CEF_STRING_TYPE_UTF8}
 {$define CEF_STRING_TYPE_UTF16}
 {.$define CEF_STRING_TYPE_WIDE}

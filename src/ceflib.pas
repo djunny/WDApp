@@ -28,6 +28,9 @@ unit ceflib;
 {$ENDIF}
 {$I cef.inc}
 
+{not support rtti}
+{$UNDEF DELPHI14_UP}
+
 interface
 uses
 {$IFDEF DELPHI14_UP}

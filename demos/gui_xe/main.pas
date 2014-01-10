@@ -6,7 +6,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ceflib, cefvcl, Buttons, ActnList, Menus, ComCtrls,
-  ExtCtrls, XPMan, Registry, ShellApi, SyncObjs;
+  ExtCtrls, XPMan, Registry, ShellApi, SyncObjs, mzTabs, AppEvnts;
 
 type
   TMainForm = class(TForm)
@@ -58,6 +58,7 @@ type
     actFileScheme: TAction;
     actChromeDevTool: TAction;
     DebuginChrome1: TMenuItem;
+    ApplicationEvents1: TApplicationEvents;
     procedure edAddressKeyPress(Sender: TObject; var Key: Char);
     procedure actPrevExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
@@ -109,11 +110,16 @@ type
       var popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo;
       var client: ICefClient; var settings: TCefBrowserSettings;
       var noJavascriptAccess: Boolean; out Result: Boolean);
+    procedure StatusBarMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure ApplicationEvents1ShortCut(var Msg: TWMKey; var Handled: Boolean);
+    procedure ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
   private
     { D閏larations priv閑s }
     FLoading: Boolean;
     FDevToolLoaded: Boolean;
     function IsMain(const b: ICefBrowser; const f: ICefFrame = nil): Boolean;
+    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
   end;
 
   TCustomRenderProcessHandler = class(TCefRenderProcessHandlerOwn)
@@ -130,10 +136,13 @@ type
       const frame: ICefFrame; const context: ICefv8Context);override;
   end;
 
-  TTestExtension = class
-    class function call(func:ICefv8Value):string;
-    class function hello: string;
+  TBrowserProcessHandlerOwn = class(TCefBrowserProcessHandlerOwn)
+  protected
+    procedure OnContextInitialized; override;
+    procedure OnBeforeChildProcessLaunch(const commandLine: ICefCommandLine); override;
+    procedure OnRenderProcessThreadCreated(const extraInfo: ICefListValue);  override;
   end;
+
 
   TExternalHandler = class(TCefv8HandlerOwn)
   protected
@@ -150,7 +159,12 @@ var
 
 implementation
 
-{$R *.dfm}           
+{$R *.dfm}
+
+uses ufrmShadowFrame;
+
+var
+  shadow : TFormShadow;
 
 procedure TMainForm.actChromeDevToolExecute(Sender: TObject);
 var
@@ -196,8 +210,7 @@ end;
 
 procedure TMainForm.actDomExecute(Sender: TObject);
 begin
-  crm.browser.SendProcessMessage(PID_RENDERER,
-    TCefProcessMessageRef.New('visitdom'));
+  crm.browser.SendProcessMessage(PID_RENDERER, TCefProcessMessageRef.New('visitdom'));
 end;
 
 procedure TMainForm.actExecuteJSExecute(Sender: TObject);
@@ -314,6 +327,13 @@ begin
   Result := (b <> nil) and (b.Identifier = crm.BrowserId) and ((f = nil) or (f.IsMain));
 end;
 
+procedure TMainForm.StatusBarMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  ReleaseCapture;
+  SendMessage(Self.handle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION,0);
+end;
+
 procedure TMainForm.actZoomInExecute(Sender: TObject);
 begin
   if crm.Browser <> nil then
@@ -330,6 +350,83 @@ procedure TMainForm.actZoomResetExecute(Sender: TObject);
 begin
   if crm.Browser <> nil then
     crm.Browser.Host.ZoomLevel := 0;
+end;
+
+procedure TMainForm.ApplicationEvents1Message(var Msg: tagMSG;
+  var Handled: Boolean);
+var
+  i : integer;
+begin
+  case Msg.message of
+    WM_MOUSEWHEEL:
+    begin
+      if ((GetKeyState(VK_CONTROL) and $8000)<> 0)then
+      begin
+        i := msg.wParam;
+        Handled := true;
+        if i > 120 then
+        begin
+          i := 5;
+        end
+        else begin
+          i := -5;
+        end;
+        crm.Browser.Host.ZoomLevel := crm.Browser.Host.ZoomLevel +  (i/10);
+      end;
+    end;
+  end;
+end;
+
+procedure TMainForm.ApplicationEvents1ShortCut(var Msg: TWMKey;
+  var Handled: Boolean);
+var
+  KeyExists,i        : Integer;
+  KCtrl,kMenu,kSHift : Integer;
+begin
+  KCtrl  := GetKeyState(VK_CONTROL) and $8000;
+  kMenu  := GetKeyState(VK_MENU)    and $8000;
+  kSHift := GetKeyState(VK_SHIFT)   and $8000;
+  //组合的在前
+  if(KCtrl<>0)AND(kSHift<>0)then//ctrl+shift
+  begin
+    if lowercase(chr(msg.charCode)) = 'd' then
+    begin
+      if Panel1.Visible then
+      begin
+        self.Menu := Nil;
+        StatusBar.Visible := false;
+        Panel1.Visible := false;
+        self.BorderStyle := bsNone;
+      end
+      else begin
+        self.Menu := MainMenu;
+        StatusBar.Visible := true;
+        Panel1.Visible := true;
+        self.BorderStyle := bsSizeable;
+      end;
+        actDevToolExecute(Nil);
+    end;
+  end
+  else if(KCtrl<>0)AND(kMenu<>0)then//ctrl+alt
+  begin
+
+  end
+  else if(kSHift<>0)then
+  begin
+
+  end
+  else if(KCtrl<>0)then
+  begin
+
+  end
+  else if (kMenu<>0) then
+  begin
+
+  end
+  else if (0-KCtrl-KMenu-Kshift=0) then
+  begin
+
+  end;
 end;
 
 procedure TMainForm.crmAddressChange(Sender: TObject;
@@ -353,6 +450,8 @@ procedure TMainForm.crmBeforePopup(Sender: TObject; const browser: ICefBrowser;
   var noJavascriptAccess: Boolean; out Result: Boolean);
 begin
   // prevent popup
+  //windowInfo.parent_window := panel2.Handle;
+
   crm.Load(targetUrl);
   Result := True;
 end;
@@ -386,13 +485,16 @@ procedure TMainForm.crmLoadEnd(Sender: TObject; const browser: ICefBrowser;
 begin
   if IsMain(browser, frame) then
     FLoading := False;
+  //crm.browser.SendProcessMessage(PID_RENDERER, TCefProcessMessageRef.New('moveWindow'));
 end;
 
 procedure TMainForm.crmLoadStart(Sender: TObject; const browser: ICefBrowser;
   const frame: ICefFrame);
 begin
   if IsMain(browser, frame) then
+  begin
     FLoading := True;
+  end;
 end;
 
 procedure TMainForm.crmProcessMessageReceived(Sender: TObject;
@@ -403,7 +505,14 @@ begin
   begin
     StatusBar.SimpleText := message.ArgumentList.GetString(0);
     Result := True;
-  end else
+  end
+  else if (message.Name = 'movewindow') then
+  begin
+    ReleaseCapture;
+    SendMessage(MainForm.handle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION,0);
+    Result := true;
+  end
+  else
     Result := False;
 end;
 
@@ -450,10 +559,30 @@ begin
   CanClose := True;
 end;
 
+procedure TMainForm.WMNCHitTest(var Message: TWMNCHitTest);
+var
+  pt: TPoint;
+begin
+  pt := ScreenToClient(SmallPointToPoint(Message.Pos));
+  if PtInRect(BoundsRect, pt) then
+    Message.Result := HTCAPTION
+  else
+    Inherited;
+end;
+
+
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FLoading := False;
   FDevToolLoaded := False;
+  crm.Load('mz://app/');
+  CefAddCrossOriginWhitelistEntry('mz://app', 'http', '', true);
+  shadow := TFormShadow.Create(Application);
+  shadow.ParentForm := Self;
+  shadow.ShadowColor := clgray;
+  shadow.ShadowOffset := 3;
+  shadow.Active := True;
+
 end;
 
 { TCustomRenderProcessHandler }
@@ -477,6 +606,7 @@ function TExternalHandler.Execute(const name: ustring; const obj: ICefv8Value;
 var
   args : TCefv8ValueArray;
 begin
+  Result := false;
   if name = 'call' then
   begin
     if arguments[0].IsFunction then
@@ -488,8 +618,16 @@ begin
     end;
     Exit(true);
     Exit(true);
+  end
+  else if name = 'windowMove' then
+  begin
+    context.Browser.SendProcessMessage(PID_BROWSER, TCefProcessMessageRef.New('movewindow'));
+    {
+    ReleaseCapture;
+    SendMessage(MainForm.handle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION,0);
+    Result := true;
+    }
   end;
-  Result := false;
 end;
 
 procedure TCustomRenderProcessHandler.OnContextReleased(const browser: ICefBrowser;
@@ -510,26 +648,24 @@ begin
   Ext.context := context;
   obj := context.Global;
   funcs := TCefv8ValueRef.NewObject(nil);
-  funcs.SetValueByKey('call', TCefv8ValueRef.NewFunction('call', Ext),
+
+  Func  := TCefv8ValueRef.NewFunction('call', Ext);
+  funcs.SetValueByKey('call', Func,
                 [V8_PROPERTY_ATTRIBUTE_READONLY]);
-  funcs.SetValueByKey('call2', TCefv8ValueRef.NewFunction('call2', Ext),
+  Func  := TCefv8ValueRef.NewFunction('call2', Ext);
+  funcs.SetValueByKey('call2', Func,
+                [V8_PROPERTY_ATTRIBUTE_READONLY]);
+
+  Func  := TCefv8ValueRef.NewFunction('windowMove', Ext);
+  funcs.SetValueByKey('windowMove', Func,
                 [V8_PROPERTY_ATTRIBUTE_READONLY]);
   obj.SetValueByKey('app', funcs, [V8_PROPERTY_ATTRIBUTE_READONLY]);  
-  {browser.MainFrame.VisitDomProc(
-      procedure(const doc: ICefDomDocument) 
-      begin
-        doc.Body.SetValue( doc.Body.ElementInnerText + 'context create'+#13#10);
-      end
-    );
-  }
-  //ShowMessage(context.Global.GetValueByKey('a').GetStringValue);
 end;
 
 function TCustomRenderProcessHandler.OnProcessMessageReceived(
   const browser: ICefBrowser; sourceProcess: TCefProcessId;
   const message: ICefProcessMessage): Boolean;
 begin
-{$IFDEF DELPHI14_UP}
   if (message.Name = 'visitdom') then
     begin
       browser.MainFrame.VisitDomProc(
@@ -546,75 +682,44 @@ begin
         end);
         Result := True;
     end
+  else if message.Name = 'moveWindow' then
+  begin
+    browser.MainFrame.VisitDomProc(procedure(const doc: ICefDomDocument) begin
+            doc.Body.AddEventListenerProc('mousedown', True,
+              procedure (const event: ICefDomEvent)
+              var
+                msg: ICefProcessMessage;
+              begin
+                msg := TCefProcessMessageRef.New('movewindow');
+                browser.SendProcessMessage(PID_BROWSER, msg);
+              end)
+          end);
+  end
   else
-{$ENDIF}
     Result := False;
 end;
 
 procedure TCustomRenderProcessHandler.OnWebKitInitialized;
 begin
-//{$IFDEF DELPHI14_UP}
-  ///TCefRTTIExtension.Register('app', TTestExtension);
-//{$ENDIF}
 end;
 
-{ TTestExtension }
 
-class function TTestExtension.hello: string;
+procedure TBrowserProcessHandlerOwn.OnContextInitialized;
 begin
-  Result := 'Hello from Delphi';
+
 end;
 
-class function TTestExtension.call(func:ICefv8Value):string;
-var
-  arr : TCefv8ValueArray;
-  con : ICefv8Context;
-  res : ICefv8Value;
-  Exp : ustring;
-  TS  : TStringList;
+procedure TBrowserProcessHandlerOwn.OnBeforeChildProcessLaunch(const commandLine: ICefCommandLine);
 begin
-  if func.IsFunction then
-  begin
 
-    {
-    if assigned(MainForm.crm.Browser.MainFrame.GetV8Context) then
-    begin
-      con := MainForm.crm.Browser.MainFrame.GetV8Context;
-      SetLength(arr, 1);
-      arr[0] := con.Global;
-      Exit(func.ExecuteFunction(func, arr).GetStringValue);
-    end;
-    }
-    {
-    res := TCefv8ValueRef.NewString('');
-    SetLength(arr, 1);
-    func.QueryInterface(ICefv8Context, con);
-    if con<>Nil then
-    begin
-    }
-      {
-      if func.GetFunctionHandler.Execute('call', func, arr, res, Exp)then
-      begin
-        Exit(res.GetStringValue);
-      end;
-      }
-      {SetLength(arr, 1);
-      arr[0] := _context.Global;
-                                  
-      TS  := TStringList.Create;
-      _context.Global.GetKeys(TS);//.GetStringValue;
-      Exit(func.ExecuteFunction(func, arr).GetStringValue);
-      Exit(func.ExecuteFunctionWithContext(_context, func, arr).GetStringValue); 
-      }
-    //end;
-    //MainForm.crm.Browser.MainFrame.ExecuteJavaScript(func.GetStringValue, '', '');
-  end;
-  Exit('1');
-  //func.Execute('call', )
 end;
 
+procedure TBrowserProcessHandlerOwn.OnRenderProcessThreadCreated(const extraInfo: ICefListValue);
+begin
+
+end;
 initialization
   CefRemoteDebuggingPort := 9000;
   CefRenderProcessHandler := TCustomRenderProcessHandler.Create;
-  CefBrowserProcessHandler := TCefBrowserProcessHandlerOwn.Create;
+  CefBrowserProcessHandler := TBrowserProcessHandlerOwn.Create;
 end.

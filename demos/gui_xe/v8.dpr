@@ -6,23 +6,23 @@ uses
   Windows,
   Forms,
   main in 'main.pas' {MainForm},
-  ceffilescheme in '..\filescheme\ceffilescheme.pas';
+  mzscheme;
 
 {$R *.res}
 
 procedure RegisterSchemes(const registrar: ICefSchemeRegistrar);
 begin
-  registrar.AddCustomScheme('local', True, True, False);
+  registrar.AddCustomScheme('mz', True, True, False);
 end;
 
 begin
-   ReportMemoryLeaksOnShutdown := DebugHook<>0;
+  ReportMemoryLeaksOnShutdown := DebugHook<>0;
   CefOnRegisterCustomSchemes := RegisterSchemes;
-  CefSingleProcess := true;
+  CefSingleProcess := true;//DebugHook<>0;
   if not CefLoadLibDefault then
     Exit;
 
-  CefRegisterSchemeHandlerFactory('local', '', False, TFileScheme);
+  CefRegisterSchemeHandlerFactory('mz', '', False, TMzScheme);
 
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
