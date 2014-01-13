@@ -6,7 +6,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ceflib, cefvcl, Buttons, ActnList, Menus, ComCtrls,
-  ExtCtrls, XPMan, Registry, ShellApi, SyncObjs, AppEvnts,uTDAppCef;
+  ExtCtrls, XPMan, Registry, ShellApi, SyncObjs, AppEvnts, uTDAppCef;
 
 const
   WM_BACKGROUND = WM_USER + $100;
@@ -419,15 +419,13 @@ procedure TMainForm.crmAfterCreated(Sender: TObject;
   const browser: ICefBrowser);
 var
   rootWND : HWND;
-  r : trect;
+  r : TRect;
   windowStyle : integer;
-  placement : PWindowPlacement;
-  F : TForm;
   newPanel : TCefPanel;
 begin
   if(crm.Browser<>Nil)AND(browser.Identifier<>crm.Browser.Identifier)then
   begin
-    rootWND     := browser.Host.WindowHandle;
+    rootWND     := GetBrowserWindow(browser);//browser.Host.WindowHandle;
     windowStyle := GetWindowLong(rootWND, GWL_STYLE);
     windowStyle := windowStyle and not WS_CAPTION;
     windowStyle := windowStyle and not WS_SYSMENU;
@@ -439,7 +437,15 @@ begin
 
     SetWindowLong(rootWND, GWL_STYLE, windowStyle);
     windowStyle := GetWindowLong(rootWND, GWL_EXSTYLE);
-    SetWindowLong(rootWND, GWL_EXSTYLE, windowStyle);
+    SetWindowLong(rootWND, GWL_EXSTYLE, windowStyle or WS_EX_TRANSPARENT);
+    SetWindowPos(rootWND, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE
+                                                 or SWP_NOZORDER or SWP_FRAMECHANGED
+                                                 or SWP_DRAWFRAME);
+    //Windows.
+    //Windows.SetWindowPos(rootWND, 0, 0, 0, 0, 0, 0);
+
+    {
+    //set width and height
     newPanel          := TCefPanel.create(Self, Browser);
     newPanel.parent   := self;
     newPanel.align    := alleft;
@@ -447,6 +453,7 @@ begin
     Windows.SetParent(rootWND, newPanel.Handle);
     GetWindowRect(newPanel.Handle, r);
     Windows.SetWindowPos(rootWND, 0, 0, 0, newPanel.Width, r.Bottom-r.Top, 0);
+    }
   end;
 end;
 
