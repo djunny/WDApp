@@ -657,6 +657,7 @@ begin
   crm.Load(getAppPath('app'));
   //set app can cross domain
   CefAddCrossOriginWhitelistEntry(getAppPath('app'), 'http', '', true);
+  CefAddCrossOriginWhitelistEntry(getAppPath('app'), 'https', '', true);
 end;
 
 procedure TMainForm.crmProcessMessageReceived(Sender: TObject;
