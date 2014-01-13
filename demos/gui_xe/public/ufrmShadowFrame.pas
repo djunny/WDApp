@@ -91,7 +91,7 @@ begin
   begin
     WndParent := Application.Handle;
     WindowClass.style := CS_DBLCLKS or CS_OWNDC;
-    Style := WS_POPUP;
+    Style := WS_POPUP or WS_SIZEBOX;
     ExStyle := WS_EX_TOOLWINDOW or WS_EX_NOACTIVATE or WS_EX_LAYERED;
   end;
 end;

@@ -23,7 +23,7 @@
 {$define CEF_STRING_TYPE_UTF16}
 {.$define CEF_STRING_TYPE_WIDE}
 
-{.$DEFINE CEF_MULTI_THREADED_MESSAGE_LOOP}
+{$DEFINE CEF_MULTI_THREADED_MESSAGE_LOOP}
 
 {$IFDEF FPC}
   // force multithreading message loop on FPC, still not work

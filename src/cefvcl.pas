@@ -621,6 +621,16 @@ type
     property UserStyleSheetLocation;
   end;
 
+
+type
+  TVCLClientHandler = class(TCustomClientHandler)
+  public
+    constructor Create(const crm: IChromiumEvents; renderer: Boolean); override;
+    destructor Destroy; override;
+  end;
+
+{ TVCLClientHandler }
+
 implementation
 {$IFNDEF CEF_MULTI_THREADED_MESSAGE_LOOP}
   uses
@@ -635,14 +645,6 @@ var
   CefTimer: UINT = 0;
 {$ENDIF}
 
-type
-  TVCLClientHandler = class(TCustomClientHandler)
-  public
-    constructor Create(const crm: IChromiumEvents; renderer: Boolean); override;
-    destructor Destroy; override;
-  end;
-
-{ TVCLClientHandler }
 
 {$IFNDEF CEF_MULTI_THREADED_MESSAGE_LOOP}
 var
@@ -702,6 +704,7 @@ begin
   FBrowser := nil;
 end;
 
+
 procedure TCustomChromium.CreateBrowser;
 var
   info: TCefWindowInfo;
@@ -712,13 +715,13 @@ begin
   begin
     FillChar(info, SizeOf(info), 0);
     rect := GetClientRect;
-    info.Style := WS_CHILD or WS_VISIBLE or WS_CLIPCHILDREN or WS_CLIPSIBLINGS or WS_TABSTOP;
+    info.Style := WS_CHILD or WS_VISIBLE{ or WS_CLIPCHILDREN or WS_CLIPSIBLINGS} or WS_TABSTOP;
     info.parent_window := Handle;
     info.x := rect.left;
     info.y := rect.top;
     info.Width := rect.right - rect.left;
     info.Height := rect.bottom - rect.top;
-    info.transparent_painting := true;
+    //info.transparent_painting := true;
     FillChar(settings, SizeOf(TCefBrowserSettings), 0);
     settings.size := SizeOf(TCefBrowserSettings);
     GetSettings(settings);

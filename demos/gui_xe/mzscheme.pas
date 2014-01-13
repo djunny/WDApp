@@ -131,23 +131,9 @@ begin
            #0:
              goto error;
          else
-           p[-1] := p^;
+           Result := string(p);
+           exit;
          end;
-      4:
-        begin
-          case p^ of
-            '/': p^ := '\';
-            #0:
-{$IFDEF UNICODE}
-              Exit(ustring(HTTPDecode(string(UTF8String(s)))));
-{$ELSE}
-              begin
-                Result := UTF8Decode(HTTPDecode(s));
-                Exit;
-              end;
-{$ENDIF}
-          end;
-        end;
     end;
     Inc(p);
   end;
@@ -167,7 +153,7 @@ end;
 destructor TMzScheme.Destroy;
 begin
   if FDataStream <> nil then
-    FDataStream.Free;
+    FreeAndNil(FDataStream);
   inherited;
 end;
 
@@ -186,6 +172,7 @@ var
   rec: TSearchRec;
   i: Integer;
   rc: TResourceStream;
+  //Ms : TMemoryStream;
 
   procedure OutPut(const str: string);
   {$IFDEF UNICODE}
@@ -247,7 +234,7 @@ begin
   if n > 0 then
     SetLength(FPath, n-1);
 
-  FPath := MZProtocolPath + FPath+'/';
+  FPath := MZProtocolPath + FPath;
 
   if DirectoryExists(FPath) then
     FPath := FPath + '/index.htm';
@@ -259,8 +246,10 @@ begin
     
     FMimeType := getMimeType(FPath);
 
+    FDataStream := TMemoryStream.Create();
+    TMemoryStream(FDataStream).LoadFromFile(FPath);
     //OutPut(Format('<script>start("%s");</script>'#13#10, [escape(FPath)]));
-    FDataStream := TFileStream.Create(FPath, fmOpenRead or fmShareDenyNone);
+    //FDataStream := TFileStream.Create(FPath, fmOpenRead or fmShareDenyNone);
   end
   else begin
     FStatus     := 404;

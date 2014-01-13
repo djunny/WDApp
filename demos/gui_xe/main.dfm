@@ -4,8 +4,8 @@ object MainForm: TMainForm
   AlphaBlend = True
   BorderStyle = bsNone
   Caption = 'Chromium Embedded'
-  ClientHeight = 614
-  ClientWidth = 710
+  ClientHeight = 464
+  ClientWidth = 614
   Color = clBtnFace
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -14,15 +14,20 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Padding.Right = 1
+  Padding.Bottom = 1
   OldCreateOrder = False
+  Position = poScreenCenter
+  Visible = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 391
-    Width = 710
+    Top = 240
+    Width = 613
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -32,8 +37,8 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 595
-    Width = 710
+    Top = 444
+    Width = 613
     Height = 19
     Panels = <>
     SimplePanel = True
@@ -42,8 +47,8 @@ object MainForm: TMainForm
   end
   object debug: TChromium
     Left = 0
-    Top = 394
-    Width = 710
+    Top = 243
+    Width = 613
     Height = 201
     Align = alBottom
     DefaultUrl = 'about:blank'
@@ -53,13 +58,15 @@ object MainForm: TMainForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 710
+    Width = 613
     Height = 25
     Align = alTop
+    Padding.Right = 1
+    Padding.Bottom = 1
     TabOrder = 2
     Visible = False
     DesignSize = (
-      710
+      613
       25)
     object SpeedButton1: TSpeedButton
       Left = 0
@@ -90,7 +97,7 @@ object MainForm: TMainForm
       Action = actReload
     end
     object SpeedButton5: TSpeedButton
-      Left = 687
+      Left = 589
       Top = 0
       Width = 23
       Height = 22
@@ -101,7 +108,7 @@ object MainForm: TMainForm
     object edAddress: TEdit
       Left = 95
       Top = 0
-      Width = 590
+      Width = 492
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
@@ -112,24 +119,41 @@ object MainForm: TMainForm
   object crm: TChromium
     Left = 0
     Top = 25
-    Width = 710
-    Height = 366
+    Width = 407
+    Height = 215
     Align = alClient
     DefaultUrl = 'D:\sources\forDelphi\Sources\dcef3\bin\Win32\1.htm'
     TabOrder = 3
     OnProcessMessageReceived = crmProcessMessageReceived
     OnLoadStart = crmLoadStart
     OnLoadEnd = crmLoadEnd
+    OnPreKeyEvent = crmPreKeyEvent
     OnAddressChange = crmAddressChange
     OnTitleChange = crmTitleChange
     OnStatusMessage = crmStatusMessage
     OnBeforeDownload = crmBeforeDownload
     OnDownloadUpdated = crmDownloadUpdated
     OnBeforePopup = crmBeforePopup
+    OnAfterCreated = crmAfterCreated
+    OnClose = crmClose
     OnBeforeResourceLoad = crmBeforeResourceLoad
-    ExplicitTop = 27
-    ExplicitWidth = 694
-    ExplicitHeight = 328
+  end
+  object leftPanel: TPanel
+    Left = 407
+    Top = 25
+    Width = 206
+    Height = 215
+    Align = alRight
+    TabOrder = 4
+    object Button1: TButton
+      Left = 64
+      Top = 128
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 0
+      OnClick = Button1Click
+    end
   end
   object ActionList: TActionList
     Left = 624

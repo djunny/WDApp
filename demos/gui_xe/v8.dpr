@@ -6,7 +6,8 @@ uses
   Windows,
   Forms,
   main in 'main.pas' {MainForm},
-  mzscheme;
+  mzscheme,
+  uCommon in 'public\uCommon.pas';
 
 {$R *.res}
 
@@ -18,7 +19,7 @@ end;
 begin
   ReportMemoryLeaksOnShutdown := DebugHook<>0;
   CefOnRegisterCustomSchemes := RegisterSchemes;
-  CefSingleProcess := true;//DebugHook<>0;
+  CefSingleProcess := DebugHook<>0;
   if not CefLoadLibDefault then
     Exit;
 
