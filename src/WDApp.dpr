@@ -1,4 +1,4 @@
-program TDApp;
+program WDApp;
 
 uses
   ceflib,

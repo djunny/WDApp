@@ -6,7 +6,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ceflib, cefvcl, Buttons, ActnList, Menus, ComCtrls,
-  ExtCtrls, XPMan, Registry, ShellApi, SyncObjs, AppEvnts, uTDAppCef;
+  ExtCtrls, XPMan, Registry, ShellApi, SyncObjs, AppEvnts, uWDAppCef;
 
 const
   WM_BACKGROUND = WM_USER + $100;
@@ -125,7 +125,7 @@ type
 
   end;
 
-  TTDAppExternal = class(TExternalHandler)
+  TWDAppExternal = class(TExternalHandler)
   protected
     function Execute(const name: ustring; const obj: ICefv8Value;
       const arguments: TCefv8ValueArray; var retval: ICefv8Value;
@@ -134,7 +134,7 @@ type
     constructor Create(); override;
   end;
 
-  TTDAppProcessHandler = class(TCustomRenderProcessHandler)
+  TWDAppProcessHandler = class(TCustomRenderProcessHandler)
   protected
 
     function OnProcessMessageReceived(const browser: ICefBrowser; sourceProcess: TCefProcessId;
@@ -672,7 +672,7 @@ end;
 // TTDAppExternal :
 // external handler has V8Context property
 //------------------------------------------------------------------------------
-constructor TTDAppExternal.Create();
+constructor TWDAppExternal.Create();
 begin
   inherited;
 end;
@@ -684,7 +684,7 @@ end;
 // P.S, but only it can do no visual method
 //      Sync MainThread must use CefSendProcessMessage() method
 //------------------------------------------------------------------------------
-function TTDAppExternal.Execute(const name: ustring; const obj: ICefv8Value;
+function TWDAppExternal.Execute(const name: ustring; const obj: ICefv8Value;
       const arguments: TCefv8ValueArray; var retval: ICefv8Value;
       var exception: ustring): Boolean;
 {$J+}
@@ -729,7 +729,7 @@ end;
 // TTDAppProcessHandler.OnProcessMessageReceived:
 // when CefSendProcessMessage send a message , this callback whill active
 //------------------------------------------------------------------------------
-function TTDAppProcessHandler.OnProcessMessageReceived(const browser: ICefBrowser; sourceProcess: TCefProcessId;
+function TWDAppProcessHandler.OnProcessMessageReceived(const browser: ICefBrowser; sourceProcess: TCefProcessId;
   const message: ICefProcessMessage): Boolean;
 {$J+}
 const LastMaxTime : Integer = -1;
@@ -787,13 +787,13 @@ end;
 
 initialization
   // register External Handler Class
-  ExternalClass          := TTDAppExternal;
+  ExternalClass          := TWDAppExternal;
   // devtool port
   CefRemoteDebuggingPort := TDAPP_DEV_PORT;
   // add External functions
   CefAddExternalFunction(ExternalFuncs);
   // init Process Handler
-  CefRenderProcessHandler := TTDAppProcessHandler.Create;
+  CefRenderProcessHandler := TWDAppProcessHandler.Create;
   // init Browser Handler
   CefBrowserProcessHandler := TBrowserProcessHandlerOwn.Create;
 end.

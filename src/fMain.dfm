@@ -120,6 +120,7 @@ object MainForm: TMainForm
     Width = 698
     Height = 215
     Align = alClient
+    DefaultUrl = 'about:blank'
     TabOrder = 3
     OnProcessMessageReceived = crmProcessMessageReceived
     OnLoadStart = crmLoadStart
@@ -133,8 +134,6 @@ object MainForm: TMainForm
     OnDownloadUpdated = crmDownloadUpdated
     OnBeforePopup = crmBeforePopup
     OnAfterCreated = crmAfterCreated
-    ExplicitLeft = -1
-    ExplicitTop = 22
   end
   object ActionList: TActionList
     Left = 624
