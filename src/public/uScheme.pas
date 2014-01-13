@@ -248,8 +248,6 @@ begin
 
     FDataStream := TMemoryStream.Create();
     TMemoryStream(FDataStream).LoadFromFile(FPath);
-    //OutPut(Format('<script>start("%s");</script>'#13#10, [escape(FPath)]));
-    //FDataStream := TFileStream.Create(FPath, fmOpenRead or fmShareDenyNone);
   end
   else begin
     FStatus     := 404;

@@ -141,12 +141,6 @@ type
       const message: ICefProcessMessage): Boolean; override;
   end;
 
-
-procedure Toggle(Handle:TCefWindowHandle; cmd:Cardinal);
-procedure Minimize(Handle:TCefWindowHandle);
-procedure Maximize(Handle:TCefWindowHandle);
-procedure Restore(Handle:TCefWindowHandle);
-
 var
   MainForm: TMainForm;
 
@@ -154,10 +148,9 @@ implementation
 
 {$R *.dfm}
 
-uses ufrmShadowFrame, uConst, uCommon;
+uses uConst, uCommon;
 
 var
-  shadow : TFormShadow;
   ExternalFuncs : array[0..4] of string=(
     'windowMove',
     'windowMax',
@@ -165,41 +158,6 @@ var
     'windowClose',
     'windowColor'
   );
-
-//toggle window state
-procedure Toggle(Handle:TCefWindowHandle; cmd:Cardinal);
-var
-  placement : PWindowPlacement;
-begin
-  placement^.length := SizeOf(TWindowPlacement);
-  placement^.flags  := 0;
-  GetWindowPlacement(Handle, placement);
-  if placement.showCmd = cmd then
-  begin
-    placement^.showCmd := SC_RESTORE;
-  end
-  else begin
-    placement^.showCmd := cmd;
-  end;
-  //SetWindowPlacement(Handle, placement);
-  PostMessage(Handle, WM_SYSCOMMAND, cmd, 0);
-  SetWindowPos(Handle, 0, 0, 0, 0, 0, SWP_NOZORDER);
-end;
-//min
-procedure Minimize(Handle:TCefWindowHandle);
-begin
-  TOGGLE(handle, SC_MINIMIZE);
-end;
-//max
-procedure Maximize(Handle:TCefWindowHandle);
-begin
-  TOGGLE(handle, SC_MAXIMIZE);
-end;
-//restore
-procedure Restore(Handle:TCefWindowHandle);
-begin
-  TOGGLE(handle, SC_RESTORE);
-end;
 
 
 procedure TMainForm.actChromeDevToolExecute(Sender: TObject);
@@ -364,7 +322,7 @@ var
   pt,selfPt : TPoint;
 begin
   case Msg.message of
-    //scroll to zoom
+    //ctrl + mousewheel : scroll to zoom
     WM_MOUSEWHEEL:
     begin
       if ((GetKeyState(VK_CONTROL) and $8000)<> 0)then
@@ -387,10 +345,10 @@ begin
         end;
       end;
     end;
-
+    //
     WM_ERASEBKGND:
     begin
-      if (csDesigning in ComponentState) then Handled := true;
+      if Not(csDesigning in ComponentState) then Handled := true;
     end;
     WM_MOUSEMOVE:
     begin
@@ -646,7 +604,7 @@ begin
         Result := HTBOTTOM
       else if (Right<EDGEDETECT) then
         Result := HTRIGHT
-    end;  //with Message, deltaRect; if BorderStyle = bsNone
+    end;
 end;
 
 procedure TMainForm.CreateParams(var Params: TCreateParams);
@@ -659,16 +617,16 @@ Procedure TMainForm.WMGetMinMaxInfo(Var msg: TWMGetMinMaxInfo);
 begin
   with msg.MinMaxInfo^ do
   begin
-    ptMaxSize.X := Screen.WorkAreaWidth;                {Width when maximized}
-    ptMaxSize.Y := Screen.WorkAreaHeight;                {Height when maximized}
-    ptMaxPosition.X := 0;             {Left position when maximized}
-    ptMaxPosition.Y := 0;             {Top position when maximized}
-    ptMinTrackSize.X := 150;           {Minimum width}
-    ptMinTrackSize.Y := 150;           {Minimum height}
-    ptMaxTrackSize.X := Screen.WorkAreaWidth;           {Maximum width}
-    ptMaxTrackSize.Y := Screen.WorkAreaHeight;           {Maximum height}
+    ptMaxSize.X      := Screen.WorkAreaWidth;        {Width when maximized}
+    ptMaxSize.Y      := Screen.WorkAreaHeight;       {Height when maximized}
+    ptMaxPosition.X  := 0;                           {Left position when maximized}
+    ptMaxPosition.Y  := 0;                           {Top position when maximized}
+    ptMinTrackSize.X := 0;                           {Minimum width}
+    ptMinTrackSize.Y := 0;                           {Minimum height}
+    ptMaxTrackSize.X := Screen.WorkAreaWidth;        {Maximum width}
+    ptMaxTrackSize.Y := Screen.WorkAreaHeight;       {Maximum height}
   end;
-  msg.Result := 0;                 {Tell windows you have changed minmaxinfo}
+  msg.Result := 0;                                   {Tell windows you have changed minmaxinfo}
   inherited;
 end;
 
@@ -692,16 +650,6 @@ begin
   crm.Load(getAppPath('app'));
   //set app can cross domain
   CefAddCrossOriginWhitelistEntry(getAppPath('app'), 'http', '', true);
-
-{$IFDEF WINDOWS}
-  shadow := TFormShadow.Create(Application);
-  shadow.ParentForm := Self;
-  shadow.ShadowColor := clgray;
-  shadow.ShadowOffset := 3;
-  shadow.Active := True;
-{$ENDIF}
-  //Maximize(crm.Browser.Host.WindowHandle);
-
 end;
 
 procedure TMainForm.crmProcessMessageReceived(Sender: TObject;
@@ -712,12 +660,22 @@ begin
 end;
 
 
-
+//------------------------------------------------------------------------------
+// TTDAppExternal :
+// external handler has V8Context property
+//------------------------------------------------------------------------------
 constructor TTDAppExternal.Create();
 begin
   inherited;
 end;
 
+
+//------------------------------------------------------------------------------
+// TTDAppExternal.execute
+// when js:window.external.xxx();
+// P.S, but only it can do no visual method
+//      Sync MainThread must use CefSendProcessMessage() method
+//------------------------------------------------------------------------------
 function TTDAppExternal.Execute(const name: ustring; const obj: ICefv8Value;
       const arguments: TCefv8ValueArray; var retval: ICefv8Value;
       var exception: ustring): Boolean;
@@ -728,6 +686,8 @@ var
   messageName : string;
   args : TCefv8ValueArray;
 begin
+  {
+  //call back example
   if name = 'call' then
   begin
     SetLength(args, 1);
@@ -735,12 +695,12 @@ begin
     retval  := arguments[0].ExecuteFunction(obj, args);
     Exit(true);
   end;
-
+  }
   //get message name
   messageName := name;
 
 
-  //check dblclick: toggle max and restore window
+  //check dblclick time: toggle max and restore window
   if compareText(name, ExternalFuncs[0])=0 then
   begin
     if lastMoveTime>=getTickCount-300 then
@@ -753,17 +713,14 @@ begin
   end;
 
   CefSendProcessMessage(PID_RENDERER, context.Browser, arguments, messageName);
-{
-  if CefSingleProcess then
-  begin
-  end
-  else begin
-    CefSendProcessMessage(PID_RENDERER, context.Browser, arguments, messageName);
-  end;
-}
+
 end;
 
 
+//------------------------------------------------------------------------------
+// TTDAppProcessHandler.OnProcessMessageReceived:
+// when CefSendProcessMessage send a message , this callback whill active
+//------------------------------------------------------------------------------
 function TTDAppProcessHandler.OnProcessMessageReceived(const browser: ICefBrowser; sourceProcess: TCefProcessId;
   const message: ICefProcessMessage): Boolean;
 {$J+}
@@ -785,9 +742,10 @@ begin
       //check time click too fast maybe get restore
       if GetTickCount - LastMaxTime - 1000 > 0 then
       begin
+        //@todo why SendMessage make app crash
         if IsZoomed(GetBrowserWindow(browser)) then
         begin
-          SendMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_RESTORE, 0);
+          PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_RESTORE, 0);
         end
         else begin
           PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_MAXIMIZE, 0);
@@ -799,7 +757,6 @@ begin
     2://min
     begin
       PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_MINIMIZE, 0);
-      //PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_MINIMIZE, 0);
       Result := true;
     end;
     3://close
@@ -821,9 +778,14 @@ end;
 
 
 initialization
+  // register External Handler Class
   ExternalClass          := TTDAppExternal;
+  // devtool port
   CefRemoteDebuggingPort := TDAPP_DEV_PORT;
+  // add External functions
   CefAddExternalFunction(ExternalFuncs);
+  // init Process Handler
   CefRenderProcessHandler := TTDAppProcessHandler.Create;
+  // init Browser Handler
   CefBrowserProcessHandler := TBrowserProcessHandlerOwn.Create;
 end.
