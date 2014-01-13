@@ -54,27 +54,28 @@
         </div>
 <script src="./js/jquery.1.10.js"></script>
 <script>
+var $e = window.external;
 $('*[move-on]').on('mousedown', function(){
 	var $target = $(event.target);
 	if($target.is('[move-off]') || $target.parents('*[move-off]').length > 0){
 		return true;
 	}else{
-		window.app.windowMove()
+		$e.windowMove();
 	}
 });
 $('.app-max').on('click', function(){
-	window.app.windowMax();
+	$e.windowMax();
 });
 $('.app-min').on('click', function(){
-	window.app.windowMin();
+	$e.windowMin();
 });
 $('.app-close').on('click', function(){
-	window.app.windowClose();
+	$e.windowClose();
 });
 $('.wrapper').on('dblclick', function(){
-	window.app.windowMax();
+	$e.windowMax();
 });
-window.app.windowColor(0);
+$e.windowColor(0);
 
 if(location.href.search(/\?/ig) >-1){
 	alert(location.href);

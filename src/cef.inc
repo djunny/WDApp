@@ -14,11 +14,16 @@
  * Group      : http://groups.google.com/group/delphichromiumembedded
  *)
 
+{$IF CompilerVersion >= 21.0}
+  {$WEAKLINKRTTI ON}
+  {$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
+{$IFEND}
+
  {.$define CEF_STRING_TYPE_UTF8}
 {$define CEF_STRING_TYPE_UTF16}
 {.$define CEF_STRING_TYPE_WIDE}
 
-{.$DEFINE CEF_MULTI_THREADED_MESSAGE_LOOP}
+{$DEFINE CEF_MULTI_THREADED_MESSAGE_LOOP}
 
 {$IFDEF FPC}
   // force multithreading message loop on FPC, still not work

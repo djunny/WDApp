@@ -1,9 +1,11 @@
 object MainForm: TMainForm
   Left = 276
   Top = 194
+  AlphaBlend = True
+  BorderStyle = bsNone
   Caption = 'Chromium Embedded'
-  ClientHeight = 652
-  ClientWidth = 864
+  ClientHeight = 464
+  ClientWidth = 699
   Color = clBtnFace
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -12,67 +14,58 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  Menu = MainMenu
+  Padding.Right = 1
+  Padding.Bottom = 1
   OldCreateOrder = False
+  Position = poScreenCenter
+  Visible = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 429
-    Width = 864
+    Top = 240
+    Width = 698
     Height = 3
     Cursor = crVSplit
     Align = alBottom
     Visible = False
-  end
-  object crm: TChromium
-    Left = 0
-    Top = 25
-    Width = 864
-    Height = 404
-    Align = alClient
-    DefaultUrl = 'http://www.google.com'
-    TabOrder = 0
-    OnProcessMessageReceived = crmProcessMessageReceived
-    OnLoadStart = crmLoadStart
-    OnLoadEnd = crmLoadEnd
-    OnAddressChange = crmAddressChange
-    OnTitleChange = crmTitleChange
-    OnStatusMessage = crmStatusMessage
-    OnBeforeDownload = crmBeforeDownload
-    OnDownloadUpdated = crmDownloadUpdated
-    OnBeforePopup = crmBeforePopup
-    OnBeforeResourceLoad = crmBeforeResourceLoad
+    ExplicitTop = 429
+    ExplicitWidth = 864
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 633
-    Width = 864
+    Top = 444
+    Width = 698
     Height = 19
     Panels = <>
     SimplePanel = True
+    Visible = False
+    OnMouseDown = StatusBarMouseDown
   end
   object debug: TChromium
     Left = 0
-    Top = 432
-    Width = 864
+    Top = 243
+    Width = 698
     Height = 201
     Align = alBottom
     DefaultUrl = 'about:blank'
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 864
+    Width = 698
     Height = 25
     Align = alTop
-    TabOrder = 3
+    Padding.Right = 1
+    Padding.Bottom = 1
+    TabOrder = 2
+    Visible = False
     DesignSize = (
-      864
+      698
       25)
     object SpeedButton1: TSpeedButton
       Left = 0
@@ -103,23 +96,47 @@ object MainForm: TMainForm
       Action = actReload
     end
     object SpeedButton5: TSpeedButton
-      Left = 841
+      Left = 674
       Top = 0
       Width = 23
       Height = 22
       Action = actGoTo
       Anchors = [akTop, akRight]
+      ExplicitLeft = 841
     end
     object edAddress: TEdit
       Left = 95
       Top = 0
-      Width = 744
+      Width = 577
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Text = 'http://www.google.com'
       OnKeyPress = edAddressKeyPress
     end
+  end
+  object crm: TChromium
+    Left = 0
+    Top = 25
+    Width = 698
+    Height = 215
+    Align = alClient
+    DefaultUrl = 'D:\sources\forDelphi\Sources\dcef3\bin\Win32\1.htm'
+    TabOrder = 3
+    OnProcessMessageReceived = crmProcessMessageReceived
+    OnLoadStart = crmLoadStart
+    OnLoadEnd = crmLoadEnd
+    OnPreKeyEvent = crmPreKeyEvent
+    OnAddressChange = crmAddressChange
+    OnTitleChange = crmTitleChange
+    OnStatusMessage = crmStatusMessage
+    OnBeforeDownload = crmBeforeDownload
+    OnDownloadUpdated = crmDownloadUpdated
+    OnBeforePopup = crmBeforePopup
+    OnAfterCreated = crmAfterCreated
+    OnClose = crmClose
+    ExplicitLeft = -1
+    ExplicitTop = 27
   end
   object ActionList: TActionList
     Left = 624
@@ -193,7 +210,6 @@ object MainForm: TMainForm
     end
     object actFileScheme: TAction
       Caption = 'File Scheme'
-      OnExecute = actFileSchemeExecute
     end
     object actChromeDevTool: TAction
       Caption = 'Debug in Chrome'
@@ -234,9 +250,6 @@ object MainForm: TMainForm
       object Zoomreset1: TMenuItem
         Action = actZoomReset
       end
-      object actFileScheme1: TMenuItem
-        Action = actFileScheme
-      end
       object VisitDOM1: TMenuItem
         Action = actDom
       end
@@ -261,5 +274,11 @@ object MainForm: TMainForm
     Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 624
     Top = 176
+  end
+  object ApplicationEvents1: TApplicationEvents
+    OnMessage = ApplicationEvents1Message
+    OnShortCut = ApplicationEvents1ShortCut
+    Left = 624
+    Top = 248
   end
 end
