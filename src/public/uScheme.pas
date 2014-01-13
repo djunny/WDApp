@@ -2,7 +2,7 @@
    {$MODE DELPHI}{$H+}
 {$ENDIF}
 
-unit mzscheme;
+unit uScheme;
 
 
 interface
@@ -10,7 +10,7 @@ interface
 uses ceflib, Classes;
 
 type
-  TMzScheme = class(TCefResourceHandlerOwn)
+  TTDAppScheme = class(TCefResourceHandlerOwn)
   private
     FPath: string;
     FDataStream: TStream;
@@ -143,21 +143,21 @@ end;
 
 { TFileScheme }
 
-constructor TMzScheme.Create(const browser: ICefBrowser; const frame: ICefFrame;
+constructor TTDAppScheme.Create(const browser: ICefBrowser; const frame: ICefFrame;
   const schemeName: ustring; const request: ICefRequest);
 begin
   inherited;
   FDataStream := nil;
 end;
 
-destructor TMzScheme.Destroy;
+destructor TTDAppScheme.Destroy;
 begin
   if FDataStream <> nil then
     FreeAndNil(FDataStream);
   inherited;
 end;
 
-procedure TMzScheme.GetResponseHeaders(const response: ICefResponse;
+procedure TTDAppScheme.GetResponseHeaders(const response: ICefResponse;
   out responseLength: Int64; out redirectUrl: ustring);
 begin
   response.Status := FStatus;
@@ -166,7 +166,7 @@ begin
   responseLength := FDataStream.Size;
 end;
 
-function TMzScheme.ProcessRequest(const request: ICefRequest;
+function TTDAppScheme.ProcessRequest(const request: ICefRequest;
       const callback: ICefCallback): Boolean;
 var
   rec: TSearchRec;
@@ -243,7 +243,7 @@ begin
   begin
     FStatus     := 200;
     FStatusText := 'OK';
-    
+
     FMimeType := getMimeType(FPath);
 
     FDataStream := TMemoryStream.Create();
@@ -267,7 +267,7 @@ begin
   callback.Cont;
 end;
 
-function TMzScheme.ReadResponse(const dataOut: Pointer; bytesToRead: Integer;
+function TTDAppScheme.ReadResponse(const dataOut: Pointer; bytesToRead: Integer;
       var bytesRead: Integer; const callback: ICefCallback): Boolean;
 begin
   BytesRead := FDataStream.Read(DataOut^, BytesToRead);

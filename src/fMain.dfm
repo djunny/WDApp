@@ -42,7 +42,6 @@ object MainForm: TMainForm
     Panels = <>
     SimplePanel = True
     Visible = False
-    OnMouseDown = StatusBarMouseDown
   end
   object debug: TChromium
     Left = 0
@@ -126,6 +125,7 @@ object MainForm: TMainForm
     OnProcessMessageReceived = crmProcessMessageReceived
     OnLoadStart = crmLoadStart
     OnLoadEnd = crmLoadEnd
+    OnRenderProcessTerminated = crmRenderProcessTerminated
     OnPreKeyEvent = crmPreKeyEvent
     OnAddressChange = crmAddressChange
     OnTitleChange = crmTitleChange
@@ -134,9 +134,6 @@ object MainForm: TMainForm
     OnDownloadUpdated = crmDownloadUpdated
     OnBeforePopup = crmBeforePopup
     OnAfterCreated = crmAfterCreated
-    OnClose = crmClose
-    ExplicitLeft = -1
-    ExplicitTop = 27
   end
   object ActionList: TActionList
     Left = 624
@@ -177,15 +174,12 @@ object MainForm: TMainForm
     end
     object actZoomIn: TAction
       Caption = 'Zoom in'
-      OnExecute = actZoomInExecute
     end
     object actZoomOut: TAction
       Caption = 'Zoom out'
-      OnExecute = actZoomOutExecute
     end
     object actZoomReset: TAction
       Caption = 'Zoom reset'
-      OnExecute = actZoomResetExecute
     end
     object actExecuteJS: TAction
       Caption = 'Execute JavaScript'
@@ -241,15 +235,6 @@ object MainForm: TMainForm
       object ExecuteJavaScript1: TMenuItem
         Action = actExecuteJS
       end
-      object Zoomin1: TMenuItem
-        Action = actZoomIn
-      end
-      object Zoomout1: TMenuItem
-        Action = actZoomOut
-      end
-      object Zoomreset1: TMenuItem
-        Action = actZoomReset
-      end
       object VisitDOM1: TMenuItem
         Action = actDom
       end
@@ -275,9 +260,9 @@ object MainForm: TMainForm
     Left = 624
     Top = 176
   end
-  object ApplicationEvents1: TApplicationEvents
-    OnMessage = ApplicationEvents1Message
-    OnShortCut = ApplicationEvents1ShortCut
+  object AppEvent: TApplicationEvents
+    OnMessage = AppEventMessage
+    OnShortCut = AppEventShortCut
     Left = 624
     Top = 248
   end

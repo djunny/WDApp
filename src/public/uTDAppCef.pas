@@ -24,22 +24,6 @@ type
     constructor Create(AOwner: TComponent; Browser: ICefBrowser);
   end;
 
-  TOnExternalExecute = function(const name: ustring; const obj: ICefv8Value;
-      const arguments: TCefv8ValueArray; var retval: ICefv8Value;
-      var exception: ustring;context : ICefv8Context): Boolean of object;
-
-  TOnProcessMessageReceived = function(const browser: ICefBrowser; sourceProcess: TCefProcessId;
-      const message: ICefProcessMessage): Boolean of object;
-
-  TBrowserGlobal = class(TObject)
-  private
-    FOnExternalExecute : TOnExternalExecute;
-    FOnProcessMessageReceived : TOnProcessMessageReceived;
-  public
-    property OnProcessMessageReceived : TOnProcessMessageReceived read FOnProcessMessageReceived write FOnProcessMessageReceived;
-    property OnExternalExecute : TOnExternalExecute read FOnExternalExecute write FOnExternalExecute;
-  end;
-
 
   //cef process handler
   TCustomRenderProcessHandler = class(TCefRenderProcessHandlerOwn)
@@ -51,9 +35,11 @@ type
     procedure OnContextCreated(const browser: ICefBrowser;
       const frame: ICefFrame; const context: ICefv8Context);override;
 
-
     procedure OnContextReleased(const browser: ICefBrowser;
       const frame: ICefFrame; const context: ICefv8Context);override;
+
+    procedure OnFocusedNodeChanged(const browser: ICefBrowser;
+      const frame: ICefFrame; const node: ICefDomNode);override;
   end;
 
   //cef browser handler
@@ -67,29 +53,33 @@ type
 
   //cef external handler
   TExternalHandler = class(TCefv8HandlerOwn)
-  protected
-    function Execute(const name: ustring; const obj: ICefv8Value;
-      const arguments: TCefv8ValueArray; var retval: ICefv8Value;
-      var exception: ustring): Boolean; override;
   public
     context : ICefv8Context;
-    constructor Create(); reintroduce;
+    constructor Create(); override;
   end;
+  TExternalClass = class of TExternalHandler;
 
+var
+   ExternalClass : TExternalClass;
 
 //get browser message
-function GetBrowserGlobal:TBrowserGlobal;
 procedure CefAddExternalFunction(Functions : array of String);
-procedure CefSendProcessMessage(Browser:ICefBrowser;arguments: TCefv8ValueArray;messageName:String);
-
+procedure CefSendProcessMessage(targetProcess: TCefProcessId;Browser:ICefBrowser;arguments: TCefv8ValueArray;messageName:String);
+function  GetBrowserWindow(Browser:ICefBrowser):HWND;
 
 implementation
 
-uses uCommon, uConst;
+uses uCommon,
+     uConst,
+     dialogs;
 
 var
   ExternalList  : TStringList;
-  BrowserGlobal : TBrowserGlobal;
+
+function GetBrowserWindow(Browser:ICefBrowser):HWND;
+begin
+  result := GetAncestor(Browser.Host.WindowHandle, GA_ROOT);//;
+end;
 
 procedure CefAddExternalFunction(Functions : array of String);
 var
@@ -103,17 +93,8 @@ begin
   end;
 end;
 
-function getBrowserGlobal:TBrowserGlobal;
-begin
-  if BrowserGlobal = NIl then
-  begin
-    BrowserGlobal := TBrowserGlobal.Create;
-  end;
-  result := BrowserGlobal;
-end;
 
-
-procedure CefSendProcessMessage(Browser:ICefBrowser;arguments: TCefv8ValueArray;messageName:String);
+procedure CefSendProcessMessage(targetProcess: TCefProcessId;Browser:ICefBrowser;arguments: TCefv8ValueArray;messageName:String);
 var
   cefMessage : ICefProcessMessage;
   cefArgs    : ICefListValue;
@@ -144,11 +125,11 @@ begin
       end
       else if arguments[argIndex].IsObject then
       begin
-        //@to do check type
+        //@to do convert value
       end;
     end;
   end;
-  Browser.SendProcessMessage(PID_BROWSER, cefMessage);
+  Browser.SendProcessMessage(targetProcess, cefMessage);
 end;
 
 
@@ -203,16 +184,16 @@ begin
   inherited create;
 end;
 
-function TExternalHandler.Execute(const name: ustring; const obj: ICefv8Value;
-  const arguments: TCefv8ValueArray; var retval: ICefv8Value;
-  var exception: ustring): Boolean;
-begin
-  if assigned(GetBrowserGlobal.OnExternalExecute) then
-    Result := GetBrowserGlobal.OnExternalExecute(name, obj, arguments, retval, exception, context);
-end;
 
 procedure TCustomRenderProcessHandler.OnContextReleased(const browser: ICefBrowser;
       const frame: ICefFrame; const context: ICefv8Context);
+begin
+
+end;
+
+
+procedure TCustomRenderProcessHandler.OnFocusedNodeChanged(const browser: ICefBrowser;
+  const frame: ICefFrame; const node: ICefDomNode);
 begin
 
 end;
@@ -234,15 +215,15 @@ begin
   if(ExternalList <> Nil)
     AND(assigned(ExternalList)) then
   begin
-    Ext := TExternalHandler.Create;
+    Ext   := ExternalClass.Create;
     Ext.context := context;
-    obj := context.Global;
+    obj   := context.Global;
     funcs := TCefv8ValueRef.NewObject(nil);
     for i := 0 to ExternalList.Count -1 do
     begin
       addFunc(ExternalList[i]);
     end;
-    obj.SetValueByKey(DAPP_EXTERNAL, funcs, [V8_PROPERTY_ATTRIBUTE_READONLY]);
+    obj.SetValueByKey(TDAPP_EXTERNAL, funcs, [V8_PROPERTY_ATTRIBUTE_READONLY]);
   end;
 end;
 
@@ -250,9 +231,10 @@ function TCustomRenderProcessHandler.OnProcessMessageReceived(
   const browser: ICefBrowser; sourceProcess: TCefProcessId;
   const message: ICefProcessMessage): Boolean;
 begin
-  if assigned(GetBrowserGlobal.OnProcessMessageReceived) then
-    Result := GetBrowserGlobal.OnProcessMessageReceived(browser, sourceProcess, message);
+//  ShowMessage(message.name);
 end;
+
+
 
 procedure TCustomRenderProcessHandler.OnWebKitInitialized;
 begin
@@ -271,16 +253,13 @@ end;
 
 procedure TBrowserProcessHandlerOwn.OnRenderProcessThreadCreated(const extraInfo: ICefListValue);
 begin
+//  ShowMessage(extraInfo.GetString(0));
 
 end;
 
 initialization
-  CefRemoteDebuggingPort := DAPP_DEV_PORT;
-  CefRenderProcessHandler := TCustomRenderProcessHandler.Create;
-  CefBrowserProcessHandler := TBrowserProcessHandlerOwn.Create;
+
 finalization
-  if BrowserGlobal<>Nil then
-    FreeAndNil(BrowserGlobal);
   if ExternalList <> Nil then
     FreeAndNil(ExternalList);
 end.

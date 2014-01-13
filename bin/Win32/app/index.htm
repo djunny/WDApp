@@ -45,7 +45,7 @@
             	<div class="content">
             		<a href="mz://app/" target="_blank">new window</a>
             		<form action="mz://app/" method="get" target="_blank">
-            			<input type="text" name="query" value="test2" />
+            			<input type="text" name="query" id="query" value="test2" />
             			<input type="submit" value="test submit" />
             		</form>
             	</div>
@@ -75,6 +75,12 @@ $('.app-close').on('click', function(){
 $('.wrapper').on('dblclick', function(){
 	$e.windowMax();
 });
+$('#query').val(Math.random());
+
+$(window).on('unload',function(){
+	alert($('#query').val());
+});
+
 $e.windowColor(0);
 
 if(location.href.search(/\?/ig) >-1){
