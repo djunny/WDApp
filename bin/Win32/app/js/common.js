@@ -1,6 +1,18 @@
 ﻿$(document).ready(function(){
 	//external object has all native method
 	var $e = window.external;
+	console.log($e);
+	if(!$e.windowMin){
+		//no in WDApp
+		$e = {
+			windowMin : function(){},
+			windowMax : function(){},
+			windowClose : function(){},
+			windowMove : function(){},
+			windowColor : function(htmlColor){},
+			windowResize : function(width,height,inScreenCenter){}
+		}
+	}
 	//bind onmousedown can move window
 	$('*[move-on]').on('mousedown', function(){
 		var $target = $(event.target);

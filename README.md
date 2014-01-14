@@ -21,4 +21,14 @@ Developer environment
 
 
 
+## Document
+=====
+
+How to build：
+[build WDApp](https://github.com/djunny/WDApp/wiki/How-to-Build-WDApp.)
+
+javascript call native method：
+[window.external](https://github.com/djunny/WDApp/wiki/window.external-object%3F)
+
+
  

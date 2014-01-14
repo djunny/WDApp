@@ -12,7 +12,6 @@ const
   WM_BACKGROUND = WM_USER + $100;
 
 type
-
   TMainForm = class(TForm)
     crm: TChromium;
     StatusBar: TStatusBar;
@@ -59,6 +58,8 @@ type
     actChromeDevTool: TAction;
     DebuginChrome1: TMenuItem;
     AppEvent: TApplicationEvents;
+    WDAppGithub1: TMenuItem;
+    actWDApp: TAction;
     procedure edAddressKeyPress(Sender: TObject; var Key: Char);
     procedure actPrevExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
@@ -115,6 +116,7 @@ type
     procedure crmBeforeContextMenu(Sender: TObject; const browser: ICefBrowser;
       const frame: ICefFrame; const params: ICefContextMenuParams;
       const model: ICefMenuModel);
+    procedure actWDAppExecute(Sender: TObject);
   private
     FLoading: Boolean;
     FDevToolLoaded: Boolean;
@@ -151,7 +153,14 @@ implementation
 
 {$R *.dfm}
 
-uses uConst, uCommon;
+uses uConst, uCommon, uHashes;
+
+type
+  //browser info
+  TWDBrowserInfo = class
+    Browser    : ICefBrowser;
+    OldWndProc : Pointer;
+  end;
 
 var
   ExternalFuncs : array[0..5] of string=(
@@ -162,6 +171,25 @@ var
     'windowColor',
     'windowResize'
   );
+  //Browser List
+  BrowserList : TObjectHash;
+
+
+function BrowserWindowNewProc(hHwnd, Msg, wParam, lParam: LongWORD): LongInt; stdcall;
+var
+  id : String;
+  browserInfo : TWDBrowserInfo;
+begin
+  id          := IntToStr(hHwnd);
+  //@todo may be there is not safe for hash list
+  browserInfo := TWDBrowserInfo(BrowserList[id]);
+  // call old wndproc
+  if(Assigned(browserInfo))
+    AND (browserInfo <> nil)then
+  begin
+    Result := CallWindowProc(browserInfo.OldWndProc, hHwnd, Msg, wParam, lParam);
+  end;
+end;
 
 
 procedure TMainForm.actChromeDevToolExecute(Sender: TObject);
@@ -260,6 +288,10 @@ procedure TMainForm.actGroupExecute(Sender: TObject);
 begin
   crm.Load('https://groups.google.com/forum/?fromgroups#!forum/delphichromiumembedded');
 end;
+procedure TMainForm.actWDAppExecute(Sender: TObject);
+begin
+  crm.Load('https://github.com/djunny/WDApp');
+end;
 
 procedure TMainForm.actHomeExecute(Sender: TObject);
 begin
@@ -313,6 +345,7 @@ begin
     TAction(sender).Caption := 'R';
   TAction(Sender).Enabled := crm.Browser <> nil;
 end;
+
 
 function TMainForm.IsMain(const b: ICefBrowser; const f: ICefFrame): Boolean;
 begin
@@ -422,14 +455,19 @@ end;
 procedure TMainForm.crmAfterCreated(Sender: TObject;
   const browser: ICefBrowser);
 var
-  rootWND : HWND;
-  r : TRect;
+  rootWND     : HWND;
+  ParentRect  : TRect;
   windowStyle : integer;
-  newPanel : TCefPanel;
+  newPanel    : TCefPanel;
+  idStr       : String;
+  BrowserInfo : TWDBrowserInfo;
 begin
-  if(crm.Browser<>Nil)AND(browser.Identifier<>crm.Browser.Identifier)then
+  if(crm.Browser<>Nil)
+    AND(browser.Identifier<>crm.Browser.Identifier)then
   begin
-    rootWND     := GetBrowserWindow(browser);//browser.Host.WindowHandle;
+    rootWND     := GetBrowserWindow(browser);
+
+    //set no caption window
     windowStyle := GetWindowLong(rootWND, GWL_STYLE);
     windowStyle := windowStyle and not WS_CAPTION;
     windowStyle := windowStyle and not WS_SYSMENU;
@@ -438,25 +476,41 @@ begin
     windowStyle := windowStyle and not WS_MAXIMIZEBOX;
     windowStyle := windowStyle and not WS_DLGFRAME;
     windowStyle := windowStyle and not WS_BORDER;
-
     SetWindowLong(rootWND, GWL_STYLE, windowStyle);
+
+    //set transparent
     windowStyle := GetWindowLong(rootWND, GWL_EXSTYLE);
     SetWindowLong(rootWND, GWL_EXSTYLE, windowStyle or WS_EX_TRANSPARENT);
+    //set topmost and redraw frame
     SetWindowPos(rootWND, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE
                                                  or SWP_NOZORDER or SWP_FRAMECHANGED
                                                  or SWP_DRAWFRAME);
+    // add browser in HashMap
+    BrowserInfo            := TWDBrowserInfo.Create;
+    // get old Wndproc
+    BrowserInfo.OldWndProc := Pointer(GetWindowLong(rootWND, GWL_WNDPROC));
+    // get ICefBrowser interface
+    BrowserInfo.Browser    := Browser;
+    // rootWND is key of BrowserList
+    idStr                  := IntToStr(RootWND);
+    BrowserList[idstr]     := BrowserInfo;
+    //replace wndproc
+    SetWindowLong(rootWND, GWL_WNDPROC, Integer(@BrowserWindowNewProc));
+
+
     //Windows.
     //Windows.SetWindowPos(rootWND, 0, 0, 0, 0, 0, 0);
 
     {
-    //set width and height
+    // this code may help to create browser in multi tab
     newPanel          := TCefPanel.create(Self, Browser);
     newPanel.parent   := self;
     newPanel.align    := alleft;
     newPanel.Width    := 150;
+
     Windows.SetParent(rootWND, newPanel.Handle);
-    GetWindowRect(newPanel.Handle, r);
-    Windows.SetWindowPos(rootWND, 0, 0, 0, newPanel.Width, r.Bottom-r.Top, 0);
+    GetWindowRect(newPanel.Handle, ParentRect);
+    Windows.SetWindowPos(rootWND, 0, 0, 0, newPanel.Width, ParentRect.Bottom-ParentRect.Top, 0);
     }
   end;
 end;
@@ -539,6 +593,8 @@ end;
 procedure TMainForm.crmRenderProcessTerminated(Sender: TObject;
   const browser: ICefBrowser; status: TCefTerminationStatus);
 begin
+  //delete in list
+  BrowserList.Delete(IntToStr(browser.Identifier));
   case status of
     TS_ABNORMAL_TERMINATION:
     begin
@@ -839,14 +895,19 @@ end;
 
 
 initialization
-  // register External Handler Class
-  ExternalClass          := TWDAppExternal;
-  // devtool port
-  CefRemoteDebuggingPort := TDAPP_DEV_PORT;
   // add External functions
   CefAddExternalFunction(ExternalFuncs);
+  // register External Handler Class
+  ExternalClass            := TWDAppExternal;
+  // devtool port
+  CefRemoteDebuggingPort   := TDAPP_DEV_PORT;
+  // create browserList
+  BrowserList              := TObjectHash.Create;
   // init Process Handler
-  CefRenderProcessHandler := TWDAppProcessHandler.Create;
+  CefRenderProcessHandler  := TWDAppProcessHandler.Create;
   // init Browser Handler
   CefBrowserProcessHandler := TBrowserProcessHandlerOwn.Create;
+
+finalization
+  FreeAndNil(BrowserList);
 end.

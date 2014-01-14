@@ -210,6 +210,10 @@ object MainForm: TMainForm
       Caption = 'Debug in Chrome'
       OnExecute = actChromeDevToolExecute
     end
+    object actWDApp: TAction
+      Caption = 'actWDApp'
+      OnExecute = actWDAppExecute
+    end
   end
   object MainMenu: TMainMenu
     Left = 624
@@ -248,11 +252,17 @@ object MainForm: TMainForm
     end
     object Help1: TMenuItem
       Caption = 'Help'
+      object WDAppGithub1: TMenuItem
+        Action = actWDApp
+        Caption = 'WDApp In Github'
+      end
       object Documentation1: TMenuItem
         Action = actDoc
+        Caption = 'Cef Documentation'
       end
       object Googlegroup1: TMenuItem
         Action = actGroup
+        Caption = 'DCef Google group'
       end
     end
   end
