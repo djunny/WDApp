@@ -229,8 +229,14 @@ begin
   begin
     MZProtocolPath := (GetCurrentDir)+'/';
   end;
+
   FPath := ParseFileUrl(Request.Url);
+  //skip char ?
   n := Pos('?', FPath);
+  if n > 0 then
+    SetLength(FPath, n-1);
+  //skip char #
+  n := Pos('#', FPath);
   if n > 0 then
     SetLength(FPath, n-1);
 

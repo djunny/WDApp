@@ -4,3 +4,4 @@ __history
 *.identcache
 *.drc
 *.map
+/bin/data/cache

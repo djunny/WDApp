@@ -223,7 +223,7 @@ begin
     begin
       addFunc(ExternalList[i]);
     end;
-    obj.SetValueByKey(TDAPP_EXTERNAL, funcs, [V8_PROPERTY_ATTRIBUTE_READONLY]);
+    obj.SetValueByKey(WDAPP_EXTERNAL, funcs, [V8_PROPERTY_ATTRIBUTE_READONLY]);
   end;
 end;
 

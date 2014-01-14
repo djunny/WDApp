@@ -9,7 +9,7 @@ WDApp(HTML5 application framework)
  
  Cef wapper(https://code.google.com/p/chromiumembedded/)
 
- you can use HTML + javscript to developer native applcation.
+ you can use HTML + javscript to develop native applcation.
  
  it is simple to add navtive method, and use cef single or multi process mode.
  

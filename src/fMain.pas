@@ -571,6 +571,15 @@ procedure TMainForm.crmLoadStart(Sender: TObject; const browser: ICefBrowser;
 begin
   if IsMain(browser, frame) then
   begin
+    {
+    TCefCookieManagerRef.Global.VisitAllCookiesProc(function(
+        const name, value, domain, path: ustring; secure, httponly,
+        hasExpires: Boolean; const creation, lastAccess, expires: TDateTime;
+        count, total: Integer; out deleteCookie: Boolean):boolean
+        begin
+          showmessage(domain + ':' + name +'='+value);
+        end);
+    }
     FLoading := True;
   end;
 end;
@@ -733,6 +742,7 @@ begin
   //set app can cross domain
   CefAddCrossOriginWhitelistEntry(getAppPath('app'), 'http', '', true);
   CefAddCrossOriginWhitelistEntry(getAppPath('app'), 'https', '', true);
+  CefAddCrossOriginWhitelistEntry(getAppPath('app'), WDAPP_PROTOCOL, '', true);
 end;
 
 procedure TMainForm.crmProcessMessageReceived(Sender: TObject;
@@ -762,12 +772,9 @@ end;
 function TWDAppExternal.Execute(const name: ustring; const obj: ICefv8Value;
       const arguments: TCefv8ValueArray; var retval: ICefv8Value;
       var exception: ustring): Boolean;
-{$J+}
-const lastMoveTime : Integer = -1;
-{$J-}
 var
   messageName : string;
-  args : TCefv8ValueArray;
+  //args : TCefv8ValueArray;
 begin
   {
   //call back example
@@ -782,18 +789,6 @@ begin
   //get message name
   messageName := name;
 
-
-  //check dblclick time: toggle max and restore window
-  if compareText(name, ExternalFuncs[0])=0 then
-  begin
-    if lastMoveTime>=getTickCount-300 then
-    begin
-      messageName := ExternalFuncs[1];
-    end
-    else begin
-      lastMoveTime := getTickCount;
-    end;
-  end;
 
   CefSendProcessMessage(PID_RENDERER, context.Browser, arguments, messageName);
 
@@ -827,7 +822,6 @@ var
     begin
       posX := Round((Screen.WorkAreaWidth -args.getInt(0))/2);
       posY := Round((Screen.WorkAreaHeight -args.getInt(1))/2);
-      //WindowStyle := WindowStyle or SWP_NOMOVE;
     end
     else begin
       WindowStyle := WindowStyle or SWP_NOMOVE;
@@ -900,7 +894,7 @@ initialization
   // register External Handler Class
   ExternalClass            := TWDAppExternal;
   // devtool port
-  CefRemoteDebuggingPort   := TDAPP_DEV_PORT;
+  CefRemoteDebuggingPort   := WDAPP_DEV_PORT;
   // create browserList
   BrowserList              := TObjectHash.Create;
   // init Process Handler
