@@ -112,6 +112,9 @@ type
       const message: ICefProcessMessage; out Result: Boolean);
     procedure crmRenderProcessTerminated(Sender: TObject;
       const browser: ICefBrowser; status: TCefTerminationStatus);
+    procedure crmBeforeContextMenu(Sender: TObject; const browser: ICefBrowser;
+      const frame: ICefFrame; const params: ICefContextMenuParams;
+      const model: ICefMenuModel);
   private
     FLoading: Boolean;
     FDevToolLoaded: Boolean;
@@ -151,12 +154,13 @@ implementation
 uses uConst, uCommon;
 
 var
-  ExternalFuncs : array[0..4] of string=(
+  ExternalFuncs : array[0..5] of string=(
     'windowMove',
     'windowMax',
     'windowMin',
     'windowClose',
-    'windowColor'
+    'windowColor',
+    'windowResize'
   );
 
 
@@ -457,6 +461,21 @@ begin
   end;
 end;
 
+procedure TMainForm.crmBeforeContextMenu(Sender: TObject;
+  const browser: ICefBrowser; const frame: ICefFrame;
+  const params: ICefContextMenuParams; const model: ICefMenuModel);
+begin
+  //debug mode
+  if Panel1.Visible then
+  begin
+
+  end
+  else begin
+    //disable context menu
+    model.Clear;
+  end;
+end;
+
 procedure TMainForm.crmBeforeDownload(Sender: TObject;
   const browser: ICefBrowser; const downloadItem: ICefDownloadItem;
   const suggestedName: ustring; const callback: ICefBeforeDownloadCallback);
@@ -736,13 +755,41 @@ const LastMaxTime : Integer = -1;
 {$J-}
 var
   pt : TPoint;
+  browserHandle : THandle;
+  args          : ICefListValue;
+  //resize window
+  procedure DoWindowResize;
+  var
+    posX, posY : integer;
+    windowStyle: integer;
+  begin
+    windowStyle := 0;
+    posX := 0;
+    posY := 0;
+    if(args.GetSize > 2)
+        and(args.GetBool(2))then
+    begin
+      posX := Round((Screen.WorkAreaWidth -args.getInt(0))/2);
+      posY := Round((Screen.WorkAreaHeight -args.getInt(1))/2);
+      //WindowStyle := WindowStyle or SWP_NOMOVE;
+    end
+    else begin
+      WindowStyle := WindowStyle or SWP_NOMOVE;
+    end;
+
+    SetWindowPos(browserHandle, 0, posX, posY,
+                args.getInt(0), args.GetInt(1),
+                windowStyle);
+  end;
 begin
   Result := false;
+  browserHandle := GetBrowserWindow(browser);
+  args          := message.ArgumentList;
   case StrToCase(message.Name, ExternalFuncs) of
     0://move
     begin
       ReleaseCapture;
-      SendMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_MOVE + HTCAPTION,0);
+      SendMessage(browserHandle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION,0);
       Result := true;
     end;
     1://max
@@ -751,12 +798,12 @@ begin
       if GetTickCount - LastMaxTime - 1000 > 0 then
       begin
         //@todo why SendMessage make app crash
-        if IsZoomed(GetBrowserWindow(browser)) then
+        if IsZoomed(browserHandle) then
         begin
-          PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_RESTORE, 0);
+          PostMessage(browserHandle, WM_SYSCOMMAND, SC_RESTORE, 0);
         end
         else begin
-          PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+          PostMessage(browserHandle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
         end;
         LastMaxTime := getTickCount;
       end;
@@ -764,24 +811,30 @@ begin
     end;
     2://min
     begin
-      PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_MINIMIZE, 0);
+      PostMessage(browserHandle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
       Result := true;
     end;
     3://close
     begin
-      PostMessage(GetBrowserWindow(browser), WM_SYSCOMMAND, SC_CLOSE, 0);
+      PostMessage(browserHandle, WM_SYSCOMMAND, SC_CLOSE, 0);
       Result := true;
     end;
     4://color
     begin
-      PostMessage(GetBrowserWindow(browser), WM_BACKGROUND, message.ArgumentList.GetInt(0), 0);
+      PostMessage(browserHandle, WM_BACKGROUND, HtmlToColor(args.getString(0)), 0);
+      result := true;
+    end;
+    5://resize(width, height, centerwindow)
+    begin
+      DoWindowResize;
       result := true;
     end
     else begin
     end;
   end;
+  //inherited parent
   if Not Result then
-    Result := inherited OnProcessMessageReceived(browser,sourceProcess,message);
+    Result := inherited OnProcessMessageReceived(browser, sourceProcess, message);
 end;
 
 

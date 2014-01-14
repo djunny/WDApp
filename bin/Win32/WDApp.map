@@ -1,9 +1,9 @@
 
  Start         Length     Name                   Class
- 0001:00401000 000DFC6CH .text                   CODE
- 0002:004E1000 00000E64H .itext                  ICODE
- 0003:004E2000 0000256CH .data                   DATA
- 0004:004E5000 000054E8H .bss                    BSS
+ 0001:00401000 000E000CH .text                   CODE
+ 0002:004E2000 00000E64H .itext                  ICODE
+ 0003:004E3000 00002570H .data                   DATA
+ 0004:004E6000 000054E8H .bss                    BSS
  0005:00000000 0000003CH .tls                    TLS
  000A:00000000 00000000H .xdata                  PDATA
 
@@ -64,12 +64,12 @@ Detailed map of segments
  0001:000CED30 00001728 C=CODE     S=.text    G=(none)   M=AppEvnts ACBP=A9
  0001:000D0458 00002B30 C=CODE     S=.text    G=(none)   M=cefvcl   ACBP=A9
  0001:000D2F88 00003784 C=CODE     S=.text    G=(none)   M=Buttons  ACBP=A9
- 0001:000D670C 000000C4 C=CODE     S=.text    G=(none)   M=uCommon  ACBP=A9
- 0001:000D67D0 00000100 C=CODE     S=.text    G=(none)   M=uConst   ACBP=A9
- 0001:000D68D0 00000860 C=CODE     S=.text    G=(none)   M=uWDAppCef ACBP=A9
- 0001:000D7130 00002928 C=CODE     S=.text    G=(none)   M=fMain    ACBP=A9
- 0001:000D9A58 000009E8 C=CODE     S=.text    G=(none)   M=uScheme  ACBP=A9
- 0001:000DA440 0000582C C=CODE     S=.text    G=(none)   M=WDApp    ACBP=A9
+ 0001:000D670C 000002F4 C=CODE     S=.text    G=(none)   M=uCommon  ACBP=A9
+ 0001:000D6A00 00000100 C=CODE     S=.text    G=(none)   M=uConst   ACBP=A9
+ 0001:000D6B00 00000860 C=CODE     S=.text    G=(none)   M=uWDAppCef ACBP=A9
+ 0001:000D7360 00002A94 C=CODE     S=.text    G=(none)   M=fMain    ACBP=A9
+ 0001:000D9DF4 000009E8 C=CODE     S=.text    G=(none)   M=uScheme  ACBP=A9
+ 0001:000DA7DC 00005830 C=CODE     S=.text    G=(none)   M=WDApp    ACBP=A9
  0002:00000000 000000AC C=ICODE    S=.itext   G=(none)   M=System   ACBP=A9
  0002:000000AC 00000018 C=ICODE    S=.itext   G=(none)   M=Windows  ACBP=A9
  0002:000000C4 00000020 C=ICODE    S=.itext   G=(none)   M=ExcUtils ACBP=A9
@@ -137,7 +137,7 @@ Detailed map of segments
  0003:00001FF8 0000000C C=DATA     S=.data    G=DGROUP   M=cefvcl   ACBP=A9
  0003:00002004 00000048 C=DATA     S=.data    G=DGROUP   M=Buttons  ACBP=A9
  0003:0000204C 0000000C C=DATA     S=.data    G=DGROUP   M=uConst   ACBP=A9
- 0003:00002058 0000001C C=DATA     S=.data    G=DGROUP   M=fMain    ACBP=A9
+ 0003:00002058 00000020 C=DATA     S=.data    G=DGROUP   M=fMain    ACBP=A9
  0004:00000000 00002C30 C=BSS      S=.bss     G=DGROUP   M=System   ACBP=A9
  0004:00002C30 0000000C C=BSS      S=.bss     G=DGROUP   M=SysInit  ACBP=A9
  0004:00002C3C 00000008 C=BSS      S=.bss     G=DGROUP   M=Windows  ACBP=A9
@@ -3506,64 +3506,66 @@ Detailed map of segments
  0004:00005418       FlatSB._InitializeFlatSB
  0004:0000541C       FlatSB._UninitializeFlatSB
  0004:000054D4       fMain..4
- 0001:000D7130       fMain..TMainForm
- 0001:000D8270       fMain..TMainForm.actGetSourceExecute$73$ActRec
- 0001:000D8640       fMain..TMainForm.actGetTextExecute$76$ActRec
- 0001:000D7920       fMain..TWDAppExternal
- 0001:000D79C0       fMain..TWDAppProcessHandler
- 0001:000D800C       fMain.CallbackGetSource
- 0001:000D83E4       fMain.CallbackGetText
+ 0001:000D7360       fMain..TMainForm
+ 0001:000D84E0       fMain..TMainForm.actGetSourceExecute$2460$ActRec
+ 0001:000D88BC       fMain..TMainForm.actGetTextExecute$2463$ActRec
+ 0001:000D7B68       fMain..TWDAppExternal
+ 0001:000D7C08       fMain..TWDAppProcessHandler
+ 0001:000D827C       fMain.CallbackGetSource
+ 0001:000D865C       fMain.CallbackGetText
+ 0001:000D9AE4       fMain.DoWindowResize
  0003:00002058       fMain.ExternalFuncs
- 0001:000D9A10       fMain.Finalization
+ 0001:000D9DAC       fMain.Finalization
  0002:00000CFC       fMain.fMain
- 0003:00002070       fMain.LastMaxTime
- 0003:0000206C       fMain.lastMoveTime
+ 0003:00002074       fMain.LastMaxTime
+ 0003:00002070       fMain.lastMoveTime
  0004:000054D0       fMain.MainForm
- 0001:000D7B3C       fMain.TMainForm.actChromeDevToolExecute
- 0001:000D7D14       fMain.TMainForm.actDevToolExecute
- 0001:000D7E0C       fMain.TMainForm.actDocExecute
- 0001:000D7E84       fMain.TMainForm.actDomExecute
- 0001:000D7F14       fMain.TMainForm.actExecuteJSExecute
- 0001:000D834C       fMain.TMainForm.actGetSourceExecute
- 0001:000D8334       fMain.TMainForm.actGetSourceExecute$73$ActRec.$0$Body
- 0001:000D871C       fMain.TMainForm.actGetTextExecute
- 0001:000D8704       fMain.TMainForm.actGetTextExecute$76$ActRec.$0$Body
- 0001:000D87B4       fMain.TMainForm.actGoToExecute
- 0001:000D8848       fMain.TMainForm.actGroupExecute
- 0001:000D890C       fMain.TMainForm.actHomeExecute
- 0001:000D898C       fMain.TMainForm.actHomeUpdate
- 0001:000D89B8       fMain.TMainForm.actNextExecute
- 0001:000D89F0       fMain.TMainForm.actNextUpdate
- 0001:000D8A48       fMain.TMainForm.actPrevExecute
- 0001:000D8A80       fMain.TMainForm.actPrevUpdate
- 0001:000D8AD8       fMain.TMainForm.actReloadExecute
- 0001:000D8B30       fMain.TMainForm.actReloadUpdate
- 0001:000D8BF4       fMain.TMainForm.AppEventMessage
- 0001:000D8D0C       fMain.TMainForm.AppEventShortCut
- 0001:000D950C       fMain.TMainForm.CreateParams
- 0001:000D8EB4       fMain.TMainForm.crmAddressChange
- 0001:000D8EEC       fMain.TMainForm.crmAfterCreated
- 0001:000D8FCC       fMain.TMainForm.crmBeforeDownload
- 0001:000D9048       fMain.TMainForm.crmBeforePopup
- 0001:000D9060       fMain.TMainForm.crmDownloadUpdated
- 0001:000D9104       fMain.TMainForm.crmLoadEnd
- 0001:000D9138       fMain.TMainForm.crmLoadStart
- 0001:000D916C       fMain.TMainForm.crmPreKeyEvent
- 0001:000D96DC       fMain.TMainForm.crmProcessMessageReceived
- 0001:000D91A0       fMain.TMainForm.crmRenderProcessTerminated
- 0001:000D91B8       fMain.TMainForm.crmStatusMessage
- 0001:000D91E0       fMain.TMainForm.crmTitleChange
- 0001:000D9214       fMain.TMainForm.edAddressKeyPress
- 0001:000D92BC       fMain.TMainForm.Exit1Click
- 0001:000D92D4       fMain.TMainForm.FormCloseQuery
- 0001:000D95DC       fMain.TMainForm.FormCreate
- 0001:000D8BA4       fMain.TMainForm.IsMain
- 0001:000D95BC       fMain.TMainForm.WMBackground
- 0001:000D9528       fMain.TMainForm.WMGetMinMaxInfo
- 0001:000D93D4       fMain.TMainForm.WMNCHitTest
- 0001:000D9710       fMain.TWDAppExternal.Create
- 0001:000D9754       fMain.TWDAppExternal.Execute
- 0001:000D983C       fMain.TWDAppProcessHandler.OnProcessMessageReceived
+ 0001:000D7DAC       fMain.TMainForm.actChromeDevToolExecute
+ 0001:000D7F84       fMain.TMainForm.actDevToolExecute
+ 0001:000D807C       fMain.TMainForm.actDocExecute
+ 0001:000D80F4       fMain.TMainForm.actDomExecute
+ 0001:000D8184       fMain.TMainForm.actExecuteJSExecute
+ 0001:000D85C4       fMain.TMainForm.actGetSourceExecute
+ 0001:000D85AC       fMain.TMainForm.actGetSourceExecute$2460$ActRec.$0$Body
+ 0001:000D8998       fMain.TMainForm.actGetTextExecute
+ 0001:000D8980       fMain.TMainForm.actGetTextExecute$2463$ActRec.$0$Body
+ 0001:000D8A30       fMain.TMainForm.actGoToExecute
+ 0001:000D8AC4       fMain.TMainForm.actGroupExecute
+ 0001:000D8B88       fMain.TMainForm.actHomeExecute
+ 0001:000D8C08       fMain.TMainForm.actHomeUpdate
+ 0001:000D8C34       fMain.TMainForm.actNextExecute
+ 0001:000D8C6C       fMain.TMainForm.actNextUpdate
+ 0001:000D8CC4       fMain.TMainForm.actPrevExecute
+ 0001:000D8CFC       fMain.TMainForm.actPrevUpdate
+ 0001:000D8D54       fMain.TMainForm.actReloadExecute
+ 0001:000D8DAC       fMain.TMainForm.actReloadUpdate
+ 0001:000D8E70       fMain.TMainForm.AppEventMessage
+ 0001:000D8F88       fMain.TMainForm.AppEventShortCut
+ 0001:000D97B4       fMain.TMainForm.CreateParams
+ 0001:000D9130       fMain.TMainForm.crmAddressChange
+ 0001:000D9168       fMain.TMainForm.crmAfterCreated
+ 0001:000D9248       fMain.TMainForm.crmBeforeContextMenu
+ 0001:000D9274       fMain.TMainForm.crmBeforeDownload
+ 0001:000D92F0       fMain.TMainForm.crmBeforePopup
+ 0001:000D9308       fMain.TMainForm.crmDownloadUpdated
+ 0001:000D93AC       fMain.TMainForm.crmLoadEnd
+ 0001:000D93E0       fMain.TMainForm.crmLoadStart
+ 0001:000D9414       fMain.TMainForm.crmPreKeyEvent
+ 0001:000D9984       fMain.TMainForm.crmProcessMessageReceived
+ 0001:000D9448       fMain.TMainForm.crmRenderProcessTerminated
+ 0001:000D9460       fMain.TMainForm.crmStatusMessage
+ 0001:000D9488       fMain.TMainForm.crmTitleChange
+ 0001:000D94BC       fMain.TMainForm.edAddressKeyPress
+ 0001:000D9564       fMain.TMainForm.Exit1Click
+ 0001:000D957C       fMain.TMainForm.FormCloseQuery
+ 0001:000D9884       fMain.TMainForm.FormCreate
+ 0001:000D8E20       fMain.TMainForm.IsMain
+ 0001:000D9864       fMain.TMainForm.WMBackground
+ 0001:000D97D0       fMain.TMainForm.WMGetMinMaxInfo
+ 0001:000D967C       fMain.TMainForm.WMNCHitTest
+ 0001:000D99B8       fMain.TWDAppExternal.Create
+ 0001:000D99FC       fMain.TWDAppExternal.Execute
+ 0001:000D9BCC       fMain.TWDAppProcessHandler.OnProcessMessageReceived
  0004:0000546C       Forms..51
  0001:000BA8B8       Forms..TApplication
  0001:000B55DC       Forms..TControlScrollBar
@@ -6034,47 +6036,49 @@ Detailed map of segments
  0001:0002A124       TypInfo.SetWideStrPropAsLongStr
  0002:00000264       TypInfo.TypInfo
  0001:00029A3C       TypInfo.UTF8SameText
+ 0001:000D6804       uCommon.HtmlToColor
+ 0001:000D67D0       uCommon.RGB
  0001:000D670C       uCommon.StrToCase
  0004:000054C0       uConst..1
- 0001:000D688C       uConst.Finalization
- 0001:000D6804       uConst.getAppPath
+ 0001:000D6ABC       uConst.Finalization
+ 0001:000D6A34       uConst.getAppPath
  0003:00002050       uConst.TDAPP_DEV_PORT
  0003:00002054       uConst.TDAPP_EXTERNAL
  0003:0000204C       uConst.TDAPP_PROTOCOL
  0002:00000CE8       uConst.uConst
  0004:000054DC       uScheme..2
- 0001:000D9A58       uScheme..TTDAppScheme
- 0001:000DA404       uScheme.Finalization
- 0001:000D9D94       uScheme.getMimeType
+ 0001:000D9DF4       uScheme..TTDAppScheme
+ 0001:000DA7A0       uScheme.Finalization
+ 0001:000DA130       uScheme.getMimeType
  0004:000054D8       uScheme.MZProtocolPath
- 0001:000D9D0C       uScheme.OutputUTF8
- 0001:000D9B2C       uScheme.ParseFileUrl
- 0001:000D9BF4       uScheme.TTDAppScheme.Create
- 0001:000D9C54       uScheme.TTDAppScheme.Destroy
- 0001:000D9CB0       uScheme.TTDAppScheme.GetResponseHeaders
- 0001:000D9F98       uScheme.TTDAppScheme.ProcessRequest
- 0001:000DA3C8       uScheme.TTDAppScheme.ReadResponse
+ 0001:000DA0A8       uScheme.OutputUTF8
+ 0001:000D9EC8       uScheme.ParseFileUrl
+ 0001:000D9F90       uScheme.TTDAppScheme.Create
+ 0001:000D9FF0       uScheme.TTDAppScheme.Destroy
+ 0001:000DA04C       uScheme.TTDAppScheme.GetResponseHeaders
+ 0001:000DA334       uScheme.TTDAppScheme.ProcessRequest
+ 0001:000DA764       uScheme.TTDAppScheme.ReadResponse
  0002:00000D74       uScheme.uScheme
  0004:000054C8       uWDAppCef..5
- 0001:000D69B0       uWDAppCef..TBrowserProcessHandlerOwn
- 0001:000D68D0       uWDAppCef..TCustomRenderProcessHandler
- 0001:000D6A74       uWDAppCef..TExternalHandler
- 0001:000D6EF8       uWDAppCef.addFunc
- 0001:000D6B9C       uWDAppCef.CefAddExternalFunction
- 0001:000D6C64       uWDAppCef.CefSendProcessMessage
+ 0001:000D6BE0       uWDAppCef..TBrowserProcessHandlerOwn
+ 0001:000D6B00       uWDAppCef..TCustomRenderProcessHandler
+ 0001:000D6CA4       uWDAppCef..TExternalHandler
+ 0001:000D7128       uWDAppCef.addFunc
+ 0001:000D6DCC       uWDAppCef.CefAddExternalFunction
+ 0001:000D6E94       uWDAppCef.CefSendProcessMessage
  0004:000054C4       uWDAppCef.ExternalClass
  0004:000054CC       uWDAppCef.ExternalList
- 0001:000D7100       uWDAppCef.Finalization
- 0001:000D6B2C       uWDAppCef.GetBrowserWindow
- 0001:000D70E0       uWDAppCef.TBrowserProcessHandlerOwn.OnBeforeChildProcessLaunch
- 0001:000D70D4       uWDAppCef.TBrowserProcessHandlerOwn.OnContextInitialized
- 0001:000D70F0       uWDAppCef.TBrowserProcessHandlerOwn.OnRenderProcessThreadCreated
- 0001:000D6F94       uWDAppCef.TCustomRenderProcessHandler.OnContextCreated
- 0001:000D6EC8       uWDAppCef.TCustomRenderProcessHandler.OnContextReleased
- 0001:000D6EE0       uWDAppCef.TCustomRenderProcessHandler.OnFocusedNodeChanged
- 0001:000D70B0       uWDAppCef.TCustomRenderProcessHandler.OnProcessMessageReceived
- 0001:000D70C8       uWDAppCef.TCustomRenderProcessHandler.OnWebKitInitialized
- 0001:000D6E84       uWDAppCef.TExternalHandler.Create
+ 0001:000D7330       uWDAppCef.Finalization
+ 0001:000D6D5C       uWDAppCef.GetBrowserWindow
+ 0001:000D7310       uWDAppCef.TBrowserProcessHandlerOwn.OnBeforeChildProcessLaunch
+ 0001:000D7304       uWDAppCef.TBrowserProcessHandlerOwn.OnContextInitialized
+ 0001:000D7320       uWDAppCef.TBrowserProcessHandlerOwn.OnRenderProcessThreadCreated
+ 0001:000D71C4       uWDAppCef.TCustomRenderProcessHandler.OnContextCreated
+ 0001:000D70F8       uWDAppCef.TCustomRenderProcessHandler.OnContextReleased
+ 0001:000D7110       uWDAppCef.TCustomRenderProcessHandler.OnFocusedNodeChanged
+ 0001:000D72E0       uWDAppCef.TCustomRenderProcessHandler.OnProcessMessageReceived
+ 0001:000D72F8       uWDAppCef.TCustomRenderProcessHandler.OnWebKitInitialized
+ 0001:000D70B4       uWDAppCef.TExternalHandler.Create
  0002:00000CF0       uWDAppCef.uWDAppCef
  0001:0006F39C       UxTheme.$thunk_BeginBufferedPaint
  0001:0006F3CC       UxTheme.$thunk_BufferedPaintSetAlpha
@@ -6389,11 +6393,11 @@ Detailed map of segments
  0004:00004EE0       VarUtils.VarXor
  0004:000054E0       WDApp.$frame
  0004:000054E4       WDApp.$life
- 0001:000DFBBC       WDApp..WDApp$116$ActRec
- 0001:000DA464       WDApp.Finalization
- 0001:000DA440       WDApp.RegisterSchemes
+ 0001:000DFF58       WDApp..WDApp$2505$ActRec
+ 0001:000DA800       WDApp.Finalization
+ 0001:000DA7DC       WDApp.RegisterSchemes
  0002:00000D7C       WDApp.WDApp
- 0001:000DFC54       WDApp.WDApp$116$ActRec.$0$Body
+ 0001:000DFFF4       WDApp.WDApp$2505$ActRec.$0$Body
  0001:000AEA8C       WideStrUtils.WStrLCopy
  0001:000AEAB4       WideStrUtils.WStrPLCopy
  0001:0000AF64       Windows.$thunk_CloseGestureInfoHandle
@@ -12393,92 +12397,96 @@ Detailed map of segments
  0001:000D6664       Buttons.DestroyLocals
  0001:000D66FC       Buttons.Finalization
  0001:000D670C       uCommon.StrToCase
- 0001:000D6804       uConst.getAppPath
- 0001:000D688C       uConst.Finalization
- 0001:000D68D0       uWDAppCef..TCustomRenderProcessHandler
- 0001:000D69B0       uWDAppCef..TBrowserProcessHandlerOwn
- 0001:000D6A74       uWDAppCef..TExternalHandler
- 0001:000D6B2C       uWDAppCef.GetBrowserWindow
- 0001:000D6B9C       uWDAppCef.CefAddExternalFunction
- 0001:000D6C64       uWDAppCef.CefSendProcessMessage
- 0001:000D6E84       uWDAppCef.TExternalHandler.Create
- 0001:000D6EC8       uWDAppCef.TCustomRenderProcessHandler.OnContextReleased
- 0001:000D6EE0       uWDAppCef.TCustomRenderProcessHandler.OnFocusedNodeChanged
- 0001:000D6EF8       uWDAppCef.addFunc
- 0001:000D6F94       uWDAppCef.TCustomRenderProcessHandler.OnContextCreated
- 0001:000D70B0       uWDAppCef.TCustomRenderProcessHandler.OnProcessMessageReceived
- 0001:000D70C8       uWDAppCef.TCustomRenderProcessHandler.OnWebKitInitialized
- 0001:000D70D4       uWDAppCef.TBrowserProcessHandlerOwn.OnContextInitialized
- 0001:000D70E0       uWDAppCef.TBrowserProcessHandlerOwn.OnBeforeChildProcessLaunch
- 0001:000D70F0       uWDAppCef.TBrowserProcessHandlerOwn.OnRenderProcessThreadCreated
- 0001:000D7100       uWDAppCef.Finalization
- 0001:000D7130       fMain..TMainForm
- 0001:000D7920       fMain..TWDAppExternal
- 0001:000D79C0       fMain..TWDAppProcessHandler
- 0001:000D7B3C       fMain.TMainForm.actChromeDevToolExecute
- 0001:000D7D14       fMain.TMainForm.actDevToolExecute
- 0001:000D7E0C       fMain.TMainForm.actDocExecute
- 0001:000D7E84       fMain.TMainForm.actDomExecute
- 0001:000D7F14       fMain.TMainForm.actExecuteJSExecute
- 0001:000D800C       fMain.CallbackGetSource
- 0001:000D8270       fMain..TMainForm.actGetSourceExecute$73$ActRec
- 0001:000D8334       fMain.TMainForm.actGetSourceExecute$73$ActRec.$0$Body
- 0001:000D834C       fMain.TMainForm.actGetSourceExecute
- 0001:000D83E4       fMain.CallbackGetText
- 0001:000D8640       fMain..TMainForm.actGetTextExecute$76$ActRec
- 0001:000D8704       fMain.TMainForm.actGetTextExecute$76$ActRec.$0$Body
- 0001:000D871C       fMain.TMainForm.actGetTextExecute
- 0001:000D87B4       fMain.TMainForm.actGoToExecute
- 0001:000D8848       fMain.TMainForm.actGroupExecute
- 0001:000D890C       fMain.TMainForm.actHomeExecute
- 0001:000D898C       fMain.TMainForm.actHomeUpdate
- 0001:000D89B8       fMain.TMainForm.actNextExecute
- 0001:000D89F0       fMain.TMainForm.actNextUpdate
- 0001:000D8A48       fMain.TMainForm.actPrevExecute
- 0001:000D8A80       fMain.TMainForm.actPrevUpdate
- 0001:000D8AD8       fMain.TMainForm.actReloadExecute
- 0001:000D8B30       fMain.TMainForm.actReloadUpdate
- 0001:000D8BA4       fMain.TMainForm.IsMain
- 0001:000D8BF4       fMain.TMainForm.AppEventMessage
- 0001:000D8D0C       fMain.TMainForm.AppEventShortCut
- 0001:000D8EB4       fMain.TMainForm.crmAddressChange
- 0001:000D8EEC       fMain.TMainForm.crmAfterCreated
- 0001:000D8FCC       fMain.TMainForm.crmBeforeDownload
- 0001:000D9048       fMain.TMainForm.crmBeforePopup
- 0001:000D9060       fMain.TMainForm.crmDownloadUpdated
- 0001:000D9104       fMain.TMainForm.crmLoadEnd
- 0001:000D9138       fMain.TMainForm.crmLoadStart
- 0001:000D916C       fMain.TMainForm.crmPreKeyEvent
- 0001:000D91A0       fMain.TMainForm.crmRenderProcessTerminated
- 0001:000D91B8       fMain.TMainForm.crmStatusMessage
- 0001:000D91E0       fMain.TMainForm.crmTitleChange
- 0001:000D9214       fMain.TMainForm.edAddressKeyPress
- 0001:000D92BC       fMain.TMainForm.Exit1Click
- 0001:000D92D4       fMain.TMainForm.FormCloseQuery
- 0001:000D93D4       fMain.TMainForm.WMNCHitTest
- 0001:000D950C       fMain.TMainForm.CreateParams
- 0001:000D9528       fMain.TMainForm.WMGetMinMaxInfo
- 0001:000D95BC       fMain.TMainForm.WMBackground
- 0001:000D95DC       fMain.TMainForm.FormCreate
- 0001:000D96DC       fMain.TMainForm.crmProcessMessageReceived
- 0001:000D9710       fMain.TWDAppExternal.Create
- 0001:000D9754       fMain.TWDAppExternal.Execute
- 0001:000D983C       fMain.TWDAppProcessHandler.OnProcessMessageReceived
- 0001:000D9A10       fMain.Finalization
- 0001:000D9A58       uScheme..TTDAppScheme
- 0001:000D9B2C       uScheme.ParseFileUrl
- 0001:000D9BF4       uScheme.TTDAppScheme.Create
- 0001:000D9C54       uScheme.TTDAppScheme.Destroy
- 0001:000D9CB0       uScheme.TTDAppScheme.GetResponseHeaders
- 0001:000D9D0C       uScheme.OutputUTF8
- 0001:000D9D94       uScheme.getMimeType
- 0001:000D9F98       uScheme.TTDAppScheme.ProcessRequest
- 0001:000DA3C8       uScheme.TTDAppScheme.ReadResponse
- 0001:000DA404       uScheme.Finalization
- 0001:000DA440       WDApp.RegisterSchemes
- 0001:000DA464       WDApp.Finalization
- 0001:000DFBBC       WDApp..WDApp$116$ActRec
- 0001:000DFC54       WDApp.WDApp$116$ActRec.$0$Body
+ 0001:000D67D0       uCommon.RGB
+ 0001:000D6804       uCommon.HtmlToColor
+ 0001:000D6A34       uConst.getAppPath
+ 0001:000D6ABC       uConst.Finalization
+ 0001:000D6B00       uWDAppCef..TCustomRenderProcessHandler
+ 0001:000D6BE0       uWDAppCef..TBrowserProcessHandlerOwn
+ 0001:000D6CA4       uWDAppCef..TExternalHandler
+ 0001:000D6D5C       uWDAppCef.GetBrowserWindow
+ 0001:000D6DCC       uWDAppCef.CefAddExternalFunction
+ 0001:000D6E94       uWDAppCef.CefSendProcessMessage
+ 0001:000D70B4       uWDAppCef.TExternalHandler.Create
+ 0001:000D70F8       uWDAppCef.TCustomRenderProcessHandler.OnContextReleased
+ 0001:000D7110       uWDAppCef.TCustomRenderProcessHandler.OnFocusedNodeChanged
+ 0001:000D7128       uWDAppCef.addFunc
+ 0001:000D71C4       uWDAppCef.TCustomRenderProcessHandler.OnContextCreated
+ 0001:000D72E0       uWDAppCef.TCustomRenderProcessHandler.OnProcessMessageReceived
+ 0001:000D72F8       uWDAppCef.TCustomRenderProcessHandler.OnWebKitInitialized
+ 0001:000D7304       uWDAppCef.TBrowserProcessHandlerOwn.OnContextInitialized
+ 0001:000D7310       uWDAppCef.TBrowserProcessHandlerOwn.OnBeforeChildProcessLaunch
+ 0001:000D7320       uWDAppCef.TBrowserProcessHandlerOwn.OnRenderProcessThreadCreated
+ 0001:000D7330       uWDAppCef.Finalization
+ 0001:000D7360       fMain..TMainForm
+ 0001:000D7B68       fMain..TWDAppExternal
+ 0001:000D7C08       fMain..TWDAppProcessHandler
+ 0001:000D7DAC       fMain.TMainForm.actChromeDevToolExecute
+ 0001:000D7F84       fMain.TMainForm.actDevToolExecute
+ 0001:000D807C       fMain.TMainForm.actDocExecute
+ 0001:000D80F4       fMain.TMainForm.actDomExecute
+ 0001:000D8184       fMain.TMainForm.actExecuteJSExecute
+ 0001:000D827C       fMain.CallbackGetSource
+ 0001:000D84E0       fMain..TMainForm.actGetSourceExecute$2460$ActRec
+ 0001:000D85AC       fMain.TMainForm.actGetSourceExecute$2460$ActRec.$0$Body
+ 0001:000D85C4       fMain.TMainForm.actGetSourceExecute
+ 0001:000D865C       fMain.CallbackGetText
+ 0001:000D88BC       fMain..TMainForm.actGetTextExecute$2463$ActRec
+ 0001:000D8980       fMain.TMainForm.actGetTextExecute$2463$ActRec.$0$Body
+ 0001:000D8998       fMain.TMainForm.actGetTextExecute
+ 0001:000D8A30       fMain.TMainForm.actGoToExecute
+ 0001:000D8AC4       fMain.TMainForm.actGroupExecute
+ 0001:000D8B88       fMain.TMainForm.actHomeExecute
+ 0001:000D8C08       fMain.TMainForm.actHomeUpdate
+ 0001:000D8C34       fMain.TMainForm.actNextExecute
+ 0001:000D8C6C       fMain.TMainForm.actNextUpdate
+ 0001:000D8CC4       fMain.TMainForm.actPrevExecute
+ 0001:000D8CFC       fMain.TMainForm.actPrevUpdate
+ 0001:000D8D54       fMain.TMainForm.actReloadExecute
+ 0001:000D8DAC       fMain.TMainForm.actReloadUpdate
+ 0001:000D8E20       fMain.TMainForm.IsMain
+ 0001:000D8E70       fMain.TMainForm.AppEventMessage
+ 0001:000D8F88       fMain.TMainForm.AppEventShortCut
+ 0001:000D9130       fMain.TMainForm.crmAddressChange
+ 0001:000D9168       fMain.TMainForm.crmAfterCreated
+ 0001:000D9248       fMain.TMainForm.crmBeforeContextMenu
+ 0001:000D9274       fMain.TMainForm.crmBeforeDownload
+ 0001:000D92F0       fMain.TMainForm.crmBeforePopup
+ 0001:000D9308       fMain.TMainForm.crmDownloadUpdated
+ 0001:000D93AC       fMain.TMainForm.crmLoadEnd
+ 0001:000D93E0       fMain.TMainForm.crmLoadStart
+ 0001:000D9414       fMain.TMainForm.crmPreKeyEvent
+ 0001:000D9448       fMain.TMainForm.crmRenderProcessTerminated
+ 0001:000D9460       fMain.TMainForm.crmStatusMessage
+ 0001:000D9488       fMain.TMainForm.crmTitleChange
+ 0001:000D94BC       fMain.TMainForm.edAddressKeyPress
+ 0001:000D9564       fMain.TMainForm.Exit1Click
+ 0001:000D957C       fMain.TMainForm.FormCloseQuery
+ 0001:000D967C       fMain.TMainForm.WMNCHitTest
+ 0001:000D97B4       fMain.TMainForm.CreateParams
+ 0001:000D97D0       fMain.TMainForm.WMGetMinMaxInfo
+ 0001:000D9864       fMain.TMainForm.WMBackground
+ 0001:000D9884       fMain.TMainForm.FormCreate
+ 0001:000D9984       fMain.TMainForm.crmProcessMessageReceived
+ 0001:000D99B8       fMain.TWDAppExternal.Create
+ 0001:000D99FC       fMain.TWDAppExternal.Execute
+ 0001:000D9AE4       fMain.DoWindowResize
+ 0001:000D9BCC       fMain.TWDAppProcessHandler.OnProcessMessageReceived
+ 0001:000D9DAC       fMain.Finalization
+ 0001:000D9DF4       uScheme..TTDAppScheme
+ 0001:000D9EC8       uScheme.ParseFileUrl
+ 0001:000D9F90       uScheme.TTDAppScheme.Create
+ 0001:000D9FF0       uScheme.TTDAppScheme.Destroy
+ 0001:000DA04C       uScheme.TTDAppScheme.GetResponseHeaders
+ 0001:000DA0A8       uScheme.OutputUTF8
+ 0001:000DA130       uScheme.getMimeType
+ 0001:000DA334       uScheme.TTDAppScheme.ProcessRequest
+ 0001:000DA764       uScheme.TTDAppScheme.ReadResponse
+ 0001:000DA7A0       uScheme.Finalization
+ 0001:000DA7DC       WDApp.RegisterSchemes
+ 0001:000DA800       WDApp.Finalization
+ 0001:000DFF58       WDApp..WDApp$2505$ActRec
+ 0001:000DFFF4       WDApp.WDApp$2505$ActRec.$0$Body
  0002:00000000       System.System
  0002:000000AC       Windows.Windows
  0002:000000C4       ExcUtils.ExcUtils
@@ -12832,8 +12840,8 @@ Detailed map of segments
  0003:00002050       uConst.TDAPP_DEV_PORT
  0003:00002054       uConst.TDAPP_EXTERNAL
  0003:00002058       fMain.ExternalFuncs
- 0003:0000206C       fMain.lastMoveTime
- 0003:00002070       fMain.LastMaxTime
+ 0003:00002070       fMain.lastMoveTime
+ 0003:00002074       fMain.LastMaxTime
  0004:00000000       System.DispCallByIDProc
  0004:00000004       System.ExceptProc
  0004:00000008       System.ErrorProc
@@ -14243,13 +14251,16 @@ Line numbers for cefvcl(cefvcl.pas) segment .text
 
 Line numbers for uCommon(uCommon.pas) segment .text
 
-    14 0001:000D670C    15 0001:000D6754    16 0001:000D675B    18 0001:000D676F
-    20 0001:000D6784    21 0001:000D678A    23 0001:000D678C    16 0001:000D678F
-    24 0001:000D6794    26 0001:000D67D7
+    18 0001:000D670C    19 0001:000D6754    20 0001:000D675B    22 0001:000D676F
+    24 0001:000D6784    25 0001:000D678A    27 0001:000D678C    20 0001:000D678F
+    28 0001:000D6794    35 0001:000D67D0    36 0001:000D67DF    37 0001:000D67FB
+    38 0001:000D6804    39 0001:000D6830    40 0001:000D6846    41 0001:000D6861
+    43 0001:000D687E    45 0001:000D6884    49 0001:000D68CB    51 0001:000D68EC
+    52 0001:000D68FA    59 0001:000D69A1    61 0001:000D69AB    63 0001:000D6A07
 
 Line numbers for uConst(uConst.pas) segment .text
 
-    18 0001:000D6804    19 0001:000D6826    20 0001:000D6846
+    18 0001:000D6A34    19 0001:000D6A56    20 0001:000D6A76
 
 Line numbers for uConst(uConst.pas) segment .itext
 
@@ -14257,22 +14268,22 @@ Line numbers for uConst(uConst.pas) segment .itext
 
 Line numbers for uWDAppCef(uWDAppCef.pas) segment .text
 
-    80 0001:000D6B2C    81 0001:000D6B50    82 0001:000D6B6E    87 0001:000D6B9C
-    88 0001:000D6BDD    89 0001:000D6BE6    90 0001:000D6BF7    92 0001:000D6C15
-    90 0001:000D6C22    94 0001:000D6C2D   102 0001:000D6C64   103 0001:000D6CA7
-   104 0001:000D6CB7   105 0001:000D6CC2   107 0001:000D6CCC   109 0001:000D6CE3
-   111 0001:000D6CF5   113 0001:000D6D26   115 0001:000D6D38   117 0001:000D6D65
-   119 0001:000D6D77   121 0001:000D6DA1   124 0001:000D6DC5   126 0001:000D6DF2
-   130 0001:000D6E02   107 0001:000D6E05   132 0001:000D6E0E   133 0001:000D6E1C
-   183 0001:000D6E84   184 0001:000D6E9C   185 0001:000D6EA6   190 0001:000D6EC8
-   192 0001:000D6ED7   197 0001:000D6EE0   199 0001:000D6EEF   210 0001:000D6EF8
-   211 0001:000D6F20   212 0001:000D6F4C   213 0001:000D6F67   214 0001:000D6F94
-   215 0001:000D6FC0   218 0001:000D6FDA   219 0001:000D6FE7   220 0001:000D6FF5
-   221 0001:000D7000   222 0001:000D700F   224 0001:000D7029   225 0001:000D7049
-   222 0001:000D704C   226 0001:000D7051   228 0001:000D706D   233 0001:000D70B0
-   235 0001:000D70BF   240 0001:000D70C8   242 0001:000D70CF   246 0001:000D70D4
-   248 0001:000D70DB   251 0001:000D70E0   252 0001:000D70EC   255 0001:000D70F0
-   258 0001:000D70FC   263 0001:000D7100   264 0001:000D7115   265 0001:000D712C
+    80 0001:000D6D5C    81 0001:000D6D80    82 0001:000D6D9E    87 0001:000D6DCC
+    88 0001:000D6E0D    89 0001:000D6E16    90 0001:000D6E27    92 0001:000D6E45
+    90 0001:000D6E52    94 0001:000D6E5D   102 0001:000D6E94   103 0001:000D6ED7
+   104 0001:000D6EE7   105 0001:000D6EF2   107 0001:000D6EFC   109 0001:000D6F13
+   111 0001:000D6F25   113 0001:000D6F56   115 0001:000D6F68   117 0001:000D6F95
+   119 0001:000D6FA7   121 0001:000D6FD1   124 0001:000D6FF5   126 0001:000D7022
+   130 0001:000D7032   107 0001:000D7035   132 0001:000D703E   133 0001:000D704C
+   183 0001:000D70B4   184 0001:000D70CC   185 0001:000D70D6   190 0001:000D70F8
+   192 0001:000D7107   197 0001:000D7110   199 0001:000D711F   210 0001:000D7128
+   211 0001:000D7150   212 0001:000D717C   213 0001:000D7197   214 0001:000D71C4
+   215 0001:000D71F0   218 0001:000D720A   219 0001:000D7217   220 0001:000D7225
+   221 0001:000D7230   222 0001:000D723F   224 0001:000D7259   225 0001:000D7279
+   222 0001:000D727C   226 0001:000D7281   228 0001:000D729D   233 0001:000D72E0
+   235 0001:000D72EF   240 0001:000D72F8   242 0001:000D72FF   246 0001:000D7304
+   248 0001:000D730B   251 0001:000D7310   252 0001:000D731C   255 0001:000D7320
+   258 0001:000D732C   263 0001:000D7330   264 0001:000D7345   265 0001:000D735C
 
 Line numbers for uWDAppCef(uWDAppCef.pas) segment .itext
 
@@ -14280,109 +14291,114 @@ Line numbers for uWDAppCef(uWDAppCef.pas) segment .itext
 
 Line numbers for fMain(fMain.pas) segment .text
 
-   167 0001:000D7B3C   168 0001:000D7B5D   169 0001:000D7B6C   170 0001:000D7B7A
-   171 0001:000D7B87   172 0001:000D7B98   173 0001:000D7BB2   175 0001:000D7BC6
-   178 0001:000D7BD6   180 0001:000D7BE4   181 0001:000D7C08   183 0001:000D7C2D
-   186 0001:000D7D14   187 0001:000D7D37   188 0001:000D7D54   189 0001:000D7D6E
-   190 0001:000D7D88   192 0001:000D7D97   194 0001:000D7DA3   195 0001:000D7DD8
-   198 0001:000D7DE2   201 0001:000D7E0C   202 0001:000D7E18   203 0001:000D7E2B
-   206 0001:000D7E84   207 0001:000D7EA4   208 0001:000D7ED2   211 0001:000D7F14
-   212 0001:000D7F34   213 0001:000D7F46   215 0001:000D7F71   220 0001:000D800C
-   221 0001:000D8028   222 0001:000D8033   223 0001:000D805A   224 0001:000D8081
-   225 0001:000D809B   226 0001:000D80C1   230 0001:000D8334   229 0001:000D834C
-   230 0001:000D838F   231 0001:000D83B8   236 0001:000D83E4   237 0001:000D8400
-   238 0001:000D840B   239 0001:000D8432   240 0001:000D8459   241 0001:000D8473
-   242 0001:000D8499   246 0001:000D8704   245 0001:000D871C   246 0001:000D875F
-   247 0001:000D8788   250 0001:000D87B4   251 0001:000D87D6   252 0001:000D87E8
-   253 0001:000D881D   256 0001:000D8848   257 0001:000D8854   258 0001:000D8867
-   261 0001:000D890C   262 0001:000D892B   263 0001:000D893D   264 0001:000D896B
-   267 0001:000D898C   268 0001:000D8998   269 0001:000D89B3   272 0001:000D89B8
-   273 0001:000D89C4   274 0001:000D89D6   275 0001:000D89EA   278 0001:000D89F0
-   279 0001:000D89FC   280 0001:000D8A0E   281 0001:000D8A34   282 0001:000D8A44
-   285 0001:000D8A48   286 0001:000D8A54   287 0001:000D8A66   288 0001:000D8A7A
-   291 0001:000D8A80   292 0001:000D8A8C   293 0001:000D8A9E   294 0001:000D8AC4
-   295 0001:000D8AD4   298 0001:000D8AD8   299 0001:000D8AE4   300 0001:000D8AF6
-   301 0001:000D8B02   302 0001:000D8B18   303 0001:000D8B2C   306 0001:000D8B30
-   307 0001:000D8B3C   308 0001:000D8B48   309 0001:000D8B57   310 0001:000D8B64
-   311 0001:000D8B7F   314 0001:000D8BA4   315 0001:000D8BB3   316 0001:000D8BED
-   323 0001:000D8BF4   324 0001:000D8C1A   328 0001:000D8C34   330 0001:000D8C47
-   331 0001:000D8C50   332 0001:000D8C56   334 0001:000D8C5C   337 0001:000D8C65
-   340 0001:000D8C6C   342 0001:000D8C77   351 0001:000D8CC9   357 0001:000D8CD8
-   364 0001:000D8D0C   365 0001:000D8D32   366 0001:000D8D44   367 0001:000D8D56
-   368 0001:000D8D68   371 0001:000D8D7C   373 0001:000D8DA9   375 0001:000D8DB8
-   376 0001:000D8DC2   377 0001:000D8DD2   378 0001:000D8DE2   381 0001:000D8DEE
-   382 0001:000D8DFF   383 0001:000D8E0F   384 0001:000D8E1F   385 0001:000D8E29
-   387 0001:000D8E46   390 0001:000D8E52   394 0001:000D8E5E   398 0001:000D8E64
-   402 0001:000D8E6A   406 0001:000D8E70   410 0001:000D8E7B   414 0001:000D8EB4
-   415 0001:000D8EC3   416 0001:000D8EE6   425 0001:000D8EEC   426 0001:000D8EFC
-   428 0001:000D8F38   429 0001:000D8F43   430 0001:000D8F51   431 0001:000D8F58
-   432 0001:000D8F5F   433 0001:000D8F66   434 0001:000D8F6D   435 0001:000D8F74
-   436 0001:000D8F7B   438 0001:000D8F82   439 0001:000D8F91   440 0001:000D8F9F
-   441 0001:000D8FB1   458 0001:000D8FC6   463 0001:000D8FCC   464 0001:000D8FF2
-   465 0001:000D901F   472 0001:000D9048   478 0001:000D9057   483 0001:000D9060
-   484 0001:000D9083   485 0001:000D908F   486 0001:000D90BF   487 0001:000D90CF
-   491 0001:000D9104   492 0001:000D9113   493 0001:000D9125   494 0001:000D912F
-   498 0001:000D9138   499 0001:000D9147   501 0001:000D9159   503 0001:000D9163
-   508 0001:000D916C   509 0001:000D917B   511 0001:000D9183   513 0001:000D918C
-   514 0001:000D9194   517 0001:000D919A   522 0001:000D91A0   523 0001:000D91AF
-   537 0001:000D91B2   541 0001:000D91B8   542 0001:000D91C7   543 0001:000D91D8
-   547 0001:000D91E0   548 0001:000D91EF   549 0001:000D9200   550 0001:000D920B
-   553 0001:000D9214   554 0001:000D923A   556 0001:000D9243   558 0001:000D9255
-   559 0001:000D928A   562 0001:000D928F   565 0001:000D92BC   566 0001:000D92C8
-   567 0001:000D92D0   570 0001:000D92D4   572 0001:000D92F7   574 0001:000D9301
-   575 0001:000D9314   577 0001:000D9329   576 0001:000D9335   580 0001:000D9367
-   582 0001:000D9388   583 0001:000D938E   590 0001:000D93D4   591 0001:000D93E0
-   592 0001:000D93EB   594 0001:000D93FB   595 0001:000D9413   596 0001:000D942D
-   597 0001:000D9445   598 0001:000D945F   599 0001:000D946B   600 0001:000D947A
-   601 0001:000D9486   602 0001:000D9492   603 0001:000D949E   604 0001:000D94AA
-   605 0001:000D94B6   606 0001:000D94C2   607 0001:000D94C8   608 0001:000D94D4
-   609 0001:000D94DA   610 0001:000D94E6   611 0001:000D94EC   612 0001:000D94F8
-   613 0001:000D94FE   615 0001:000D9508   618 0001:000D950C   619 0001:000D9518
-   620 0001:000D9523   624 0001:000D9528   625 0001:000D9534   627 0001:000D953D
-   628 0001:000D954F   629 0001:000D9561   630 0001:000D9569   631 0001:000D9571
-   632 0001:000D9579   633 0001:000D9581   634 0001:000D9593   636 0001:000D95A5
-   637 0001:000D95AD   638 0001:000D95B8   643 0001:000D95BC   644 0001:000D95C8
-   645 0001:000D95D6   651 0001:000D95DC   652 0001:000D9601   653 0001:000D960B
-   657 0001:000D9615   659 0001:000D9633   660 0001:000D9651   661 0001:000D966F
-   666 0001:000D96DC   667 0001:000D96EC   668 0001:000D9707   676 0001:000D9710
-   677 0001:000D9728   678 0001:000D9732   696 0001:000D9754   708 0001:000D977D
-   712 0001:000D9788   714 0001:000D979A   716 0001:000D97C1   719 0001:000D97D1
-   723 0001:000D97DB   725 0001:000D97FD   739 0001:000D983C   740 0001:000D9862
-   741 0001:000D9866   744 0001:000D98A7   745 0001:000D98AC   746 0001:000D98C6
-   751 0001:000D98CF   754 0001:000D98FD   756 0001:000D990F   759 0001:000D992B
-   761 0001:000D9945   763 0001:000D994F   767 0001:000D9955   768 0001:000D996F
-   772 0001:000D9975   773 0001:000D998F   777 0001:000D9995   778 0001:000D99C0
-   783 0001:000D99C4   784 0001:000D99CA   785 0001:000D99DF
+   171 0001:000D7DAC   172 0001:000D7DCD   173 0001:000D7DDC   174 0001:000D7DEA
+   175 0001:000D7DF7   176 0001:000D7E08   177 0001:000D7E22   179 0001:000D7E36
+   182 0001:000D7E46   184 0001:000D7E54   185 0001:000D7E78   187 0001:000D7E9D
+   190 0001:000D7F84   191 0001:000D7FA7   192 0001:000D7FC4   193 0001:000D7FDE
+   194 0001:000D7FF8   196 0001:000D8007   198 0001:000D8013   199 0001:000D8048
+   202 0001:000D8052   205 0001:000D807C   206 0001:000D8088   207 0001:000D809B
+   210 0001:000D80F4   211 0001:000D8114   212 0001:000D8142   215 0001:000D8184
+   216 0001:000D81A4   217 0001:000D81B6   219 0001:000D81E1   224 0001:000D827C
+   225 0001:000D8298   226 0001:000D82A3   227 0001:000D82CA   228 0001:000D82F1
+   229 0001:000D830B   230 0001:000D8331   234 0001:000D85AC   233 0001:000D85C4
+   234 0001:000D8607   235 0001:000D8630   240 0001:000D865C   241 0001:000D8678
+   242 0001:000D8683   243 0001:000D86AA   244 0001:000D86D1   245 0001:000D86EB
+   246 0001:000D8711   250 0001:000D8980   249 0001:000D8998   250 0001:000D89DB
+   251 0001:000D8A04   254 0001:000D8A30   255 0001:000D8A52   256 0001:000D8A64
+   257 0001:000D8A99   260 0001:000D8AC4   261 0001:000D8AD0   262 0001:000D8AE3
+   265 0001:000D8B88   266 0001:000D8BA7   267 0001:000D8BB9   268 0001:000D8BE7
+   271 0001:000D8C08   272 0001:000D8C14   273 0001:000D8C2F   276 0001:000D8C34
+   277 0001:000D8C40   278 0001:000D8C52   279 0001:000D8C66   282 0001:000D8C6C
+   283 0001:000D8C78   284 0001:000D8C8A   285 0001:000D8CB0   286 0001:000D8CC0
+   289 0001:000D8CC4   290 0001:000D8CD0   291 0001:000D8CE2   292 0001:000D8CF6
+   295 0001:000D8CFC   296 0001:000D8D08   297 0001:000D8D1A   298 0001:000D8D40
+   299 0001:000D8D50   302 0001:000D8D54   303 0001:000D8D60   304 0001:000D8D72
+   305 0001:000D8D7E   306 0001:000D8D94   307 0001:000D8DA8   310 0001:000D8DAC
+   311 0001:000D8DB8   312 0001:000D8DC4   313 0001:000D8DD3   314 0001:000D8DE0
+   315 0001:000D8DFB   318 0001:000D8E20   319 0001:000D8E2F   320 0001:000D8E69
+   327 0001:000D8E70   328 0001:000D8E96   332 0001:000D8EB0   334 0001:000D8EC3
+   335 0001:000D8ECC   336 0001:000D8ED2   338 0001:000D8ED8   341 0001:000D8EE1
+   344 0001:000D8EE8   346 0001:000D8EF3   355 0001:000D8F45   361 0001:000D8F54
+   368 0001:000D8F88   369 0001:000D8FAE   370 0001:000D8FC0   371 0001:000D8FD2
+   372 0001:000D8FE4   375 0001:000D8FF8   377 0001:000D9025   379 0001:000D9034
+   380 0001:000D903E   381 0001:000D904E   382 0001:000D905E   385 0001:000D906A
+   386 0001:000D907B   387 0001:000D908B   388 0001:000D909B   389 0001:000D90A5
+   391 0001:000D90C2   394 0001:000D90CE   398 0001:000D90DA   402 0001:000D90E0
+   406 0001:000D90E6   410 0001:000D90EC   414 0001:000D90F7   418 0001:000D9130
+   419 0001:000D913F   420 0001:000D9162   429 0001:000D9168   430 0001:000D9178
+   432 0001:000D91B4   433 0001:000D91BF   434 0001:000D91CD   435 0001:000D91D4
+   436 0001:000D91DB   437 0001:000D91E2   438 0001:000D91E9   439 0001:000D91F0
+   440 0001:000D91F7   442 0001:000D91FE   443 0001:000D920D   444 0001:000D921B
+   445 0001:000D922D   462 0001:000D9242   467 0001:000D9248   469 0001:000D9257
+   475 0001:000D9266   477 0001:000D926E   482 0001:000D9274   483 0001:000D929A
+   484 0001:000D92C7   491 0001:000D92F0   497 0001:000D92FF   502 0001:000D9308
+   503 0001:000D932B   504 0001:000D9337   505 0001:000D9367   506 0001:000D9377
+   510 0001:000D93AC   511 0001:000D93BB   512 0001:000D93CD   513 0001:000D93D7
+   517 0001:000D93E0   518 0001:000D93EF   520 0001:000D9401   522 0001:000D940B
+   527 0001:000D9414   528 0001:000D9423   530 0001:000D942B   532 0001:000D9434
+   533 0001:000D943C   536 0001:000D9442   541 0001:000D9448   542 0001:000D9457
+   556 0001:000D945A   560 0001:000D9460   561 0001:000D946F   562 0001:000D9480
+   566 0001:000D9488   567 0001:000D9497   568 0001:000D94A8   569 0001:000D94B3
+   572 0001:000D94BC   573 0001:000D94E2   575 0001:000D94EB   577 0001:000D94FD
+   578 0001:000D9532   581 0001:000D9537   584 0001:000D9564   585 0001:000D9570
+   586 0001:000D9578   589 0001:000D957C   591 0001:000D959F   593 0001:000D95A9
+   594 0001:000D95BC   596 0001:000D95D1   595 0001:000D95DD   599 0001:000D960F
+   601 0001:000D9630   602 0001:000D9636   609 0001:000D967C   610 0001:000D9688
+   611 0001:000D9693   613 0001:000D96A3   614 0001:000D96BB   615 0001:000D96D5
+   616 0001:000D96ED   617 0001:000D9707   618 0001:000D9713   619 0001:000D9722
+   620 0001:000D972E   621 0001:000D973A   622 0001:000D9746   623 0001:000D9752
+   624 0001:000D975E   625 0001:000D976A   626 0001:000D9770   627 0001:000D977C
+   628 0001:000D9782   629 0001:000D978E   630 0001:000D9794   631 0001:000D97A0
+   632 0001:000D97A6   634 0001:000D97B0   637 0001:000D97B4   638 0001:000D97C0
+   639 0001:000D97CB   643 0001:000D97D0   644 0001:000D97DC   646 0001:000D97E5
+   647 0001:000D97F7   648 0001:000D9809   649 0001:000D9811   650 0001:000D9819
+   651 0001:000D9821   652 0001:000D9829   653 0001:000D983B   655 0001:000D984D
+   656 0001:000D9855   657 0001:000D9860   662 0001:000D9864   663 0001:000D9870
+   664 0001:000D987E   670 0001:000D9884   671 0001:000D98A9   672 0001:000D98B3
+   676 0001:000D98BD   678 0001:000D98DB   679 0001:000D98F9   680 0001:000D9917
+   685 0001:000D9984   686 0001:000D9994   687 0001:000D99AF   695 0001:000D99B8
+   696 0001:000D99D0   697 0001:000D99DA   715 0001:000D99FC   727 0001:000D9A25
+   731 0001:000D9A30   733 0001:000D9A42   735 0001:000D9A69   738 0001:000D9A79
+   742 0001:000D9A83   744 0001:000D9AA5   765 0001:000D9AE4   766 0001:000D9AEA
+   767 0001:000D9AEF   768 0001:000D9AF4   769 0001:000D9AF9   772 0001:000D9B1D
+   773 0001:000D9B4E   777 0001:000D9B84   780 0001:000D9B88   783 0001:000D9BC1
+   784 0001:000D9BCC   785 0001:000D9BF5   786 0001:000D9BF9   787 0001:000D9C04
+   788 0001:000D9C0F   791 0001:000D9C54   792 0001:000D9C59   793 0001:000D9C6E
+   798 0001:000D9C77   801 0001:000D9CA5   803 0001:000D9CB2   806 0001:000D9CC9
+   808 0001:000D9CDE   810 0001:000D9CE8   814 0001:000D9CEE   815 0001:000D9D03
+   819 0001:000D9D09   820 0001:000D9D1E   824 0001:000D9D24   825 0001:000D9D4A
+   829 0001:000D9D50   830 0001:000D9D57   836 0001:000D9D5B   837 0001:000D9D61
+   838 0001:000D9D76
 
 Line numbers for fMain(fMain.pas) segment .itext
 
-   788 0002:00000CFC   790 0002:00000D08   792 0002:00000D15   794 0002:00000D24
-   796 0002:00000D33   798 0002:00000D52   799 0002:00000D71
+   841 0002:00000CFC   843 0002:00000D08   845 0002:00000D15   847 0002:00000D24
+   849 0002:00000D33   851 0002:00000D52   852 0002:00000D71
 
 Line numbers for uScheme(uScheme.pas) segment .text
 
-   104 0001:000D9B2C   105 0001:000D9B38   106 0001:000D9B43   107 0001:000D9B48
-   110 0001:000D9B4D   111 0001:000D9B5F   112 0001:000D9B71   113 0001:000D9B78
-   115 0001:000D9B7A   116 0001:000D9B83   117 0001:000D9B8A   118 0001:000D9B8C
-   120 0001:000D9B95   121 0001:000D9B9C   123 0001:000D9BA2   124 0001:000D9BA4
-   127 0001:000D9BB6   128 0001:000D9BBF   129 0001:000D9BC7   134 0001:000D9BD0
-   135 0001:000D9BDB   138 0001:000D9BDD   108 0001:000D9BE1   141 0001:000D9BE6
-   142 0001:000D9BEE   148 0001:000D9BF4   149 0001:000D9C0F   150 0001:000D9C28
-   151 0001:000D9C30   154 0001:000D9C54   155 0001:000D9C65   156 0001:000D9C6E
-   157 0001:000D9C8E   158 0001:000D9C9C   162 0001:000D9CB0   163 0001:000D9CCA
-   164 0001:000D9CD8   165 0001:000D9CE6   166 0001:000D9CF4   167 0001:000D9D06
-   194 0001:000D9D0C   196 0001:000D9D29   200 0001:000D9D39   201 0001:000D9D6F
-   205 0001:000D9D94   206 0001:000D9DBA   207 0001:000D9DE6   209 0001:000D9E04
-   211 0001:000D9E13   213 0001:000D9E22   215 0001:000D9E31   217 0001:000D9E40
-   219 0001:000D9E4F   221 0001:000D9E5E   223 0001:000D9E6B   226 0001:000D9F98
-   227 0001:000D9FEA   228 0001:000D9FEE   230 0001:000D9FF7   232 0001:000DA017
-   233 0001:000DA047   234 0001:000DA05A   235 0001:000DA060   237 0001:000DA06F
-   239 0001:000DA086   240 0001:000DA097   242 0001:000DA0A7   244 0001:000DA0BE
-   245 0001:000DA0C8   247 0001:000DA0D8   249 0001:000DA0FC   250 0001:000DA10E
-   253 0001:000DA121   254 0001:000DA12B   256 0001:000DA13B   258 0001:000DA14D
-   260 0001:000DA17A   261 0001:000DA18A   264 0001:000DA199   265 0001:000DA1A4
-   266 0001:000DA1AC   270 0001:000DA3C8   271 0001:000DA3D8   272 0001:000DA3EE
-   273 0001:000DA3F2   274 0001:000DA3FA
+   104 0001:000D9EC8   105 0001:000D9ED4   106 0001:000D9EDF   107 0001:000D9EE4
+   110 0001:000D9EE9   111 0001:000D9EFB   112 0001:000D9F0D   113 0001:000D9F14
+   115 0001:000D9F16   116 0001:000D9F1F   117 0001:000D9F26   118 0001:000D9F28
+   120 0001:000D9F31   121 0001:000D9F38   123 0001:000D9F3E   124 0001:000D9F40
+   127 0001:000D9F52   128 0001:000D9F5B   129 0001:000D9F63   134 0001:000D9F6C
+   135 0001:000D9F77   138 0001:000D9F79   108 0001:000D9F7D   141 0001:000D9F82
+   142 0001:000D9F8A   148 0001:000D9F90   149 0001:000D9FAB   150 0001:000D9FC4
+   151 0001:000D9FCC   154 0001:000D9FF0   155 0001:000DA001   156 0001:000DA00A
+   157 0001:000DA02A   158 0001:000DA038   162 0001:000DA04C   163 0001:000DA066
+   164 0001:000DA074   165 0001:000DA082   166 0001:000DA090   167 0001:000DA0A2
+   194 0001:000DA0A8   196 0001:000DA0C5   200 0001:000DA0D5   201 0001:000DA10B
+   205 0001:000DA130   206 0001:000DA156   207 0001:000DA182   209 0001:000DA1A0
+   211 0001:000DA1AF   213 0001:000DA1BE   215 0001:000DA1CD   217 0001:000DA1DC
+   219 0001:000DA1EB   221 0001:000DA1FA   223 0001:000DA207   226 0001:000DA334
+   227 0001:000DA386   228 0001:000DA38A   230 0001:000DA393   232 0001:000DA3B3
+   233 0001:000DA3E3   234 0001:000DA3F6   235 0001:000DA3FC   237 0001:000DA40B
+   239 0001:000DA422   240 0001:000DA433   242 0001:000DA443   244 0001:000DA45A
+   245 0001:000DA464   247 0001:000DA474   249 0001:000DA498   250 0001:000DA4AA
+   253 0001:000DA4BD   254 0001:000DA4C7   256 0001:000DA4D7   258 0001:000DA4E9
+   260 0001:000DA516   261 0001:000DA526   264 0001:000DA535   265 0001:000DA540
+   266 0001:000DA548   270 0001:000DA764   271 0001:000DA774   272 0001:000DA78A
+   273 0001:000DA78E   274 0001:000DA796
 
 Line numbers for uScheme(uScheme.pas) segment .itext
 
@@ -14390,7 +14406,7 @@ Line numbers for uScheme(uScheme.pas) segment .itext
 
 Line numbers for WDApp(WDApp.dpr) segment .text
 
-    13 0001:000DA440    14 0001:000DA447    15 0001:000DA45E    19 0001:000DFC54
+    13 0001:000DA7DC    14 0001:000DA7E3    15 0001:000DA7FA    19 0001:000DFFF4
 
 Line numbers for WDApp(WDApp.dpr) segment .itext
 

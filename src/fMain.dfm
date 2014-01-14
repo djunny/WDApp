@@ -126,6 +126,7 @@ object MainForm: TMainForm
     OnLoadStart = crmLoadStart
     OnLoadEnd = crmLoadEnd
     OnRenderProcessTerminated = crmRenderProcessTerminated
+    OnBeforeContextMenu = crmBeforeContextMenu
     OnPreKeyEvent = crmPreKeyEvent
     OnAddressChange = crmAddressChange
     OnTitleChange = crmTitleChange

@@ -4,32 +4,41 @@
         <title>
             WDApp Index
         </title>
-        <Style>@import './style/app.css';</style>
+		<link rel="stylesheet" type="text/css" href="./metro/metro-bootstrap.min.css">
+		<link rel='stylesheet' href='./metro/scrollbar.css' type='text/css' media='screen' />
 		<script src="./js/jquery.1.10.js"></script>
+		<script src="./metro/metro.min.js"></script>
+		<script src="./js/letterjs.js"></script>
 		<script src="./js/common.js"></script>
+		<style>
+		body{overflow:hidden;min-width:200px;}
+		.page{height:100%!important}
+		.content{display:block;background:#000;position:absolute!important;top:32px!important;left:0px;right:0px;bottom:0px;overflow:auto;padding:10px!important;min-height:auto!important}
+		</style>
+		
+		<link rel='stylesheet' href='./style/component.css' type='text/css' media='screen' />
     </head>
-    <body>
-    	<!-- frame work for app-->
-        <!-- app wrapper:can set background-->
-        <div class="wrapper" move-on>
-        	<!--button on window-->
-            <div class="app-btn" move-off>
-            	<div class="app-min" move-off></div>
-                <div class="app-max" move-off></div>
-                <div class="app-close" move-off></div>
-            </div>
-            <!-- content box background -->
-            <div class="content-bg" move-off>
-            	<!-- content box -->
-            	<div class="content" move-off>
-            		<a href="mz://app/" target="_blank">new window</a>
-            		<form action="mz://app/" method="get" target="_blank">
-            			<input type="text" name="query" id="query" value="test2" />
-            			<input type="submit" value="test submit" />
-            		</form>
-            	</div>
-            </div>
-            
-        </div>
+    <body class="metro">
+    	<div class="window container page">
+			<div class="caption">
+				<span class="icon icon-windows"></span>
+				<div class="title">WDApp Main Window</div>
+				<button class="btn-min"></button>
+				<button class="btn-max"></button>
+				<button class="btn-close"></button>
+			</div>
+			<div class="content">
+				<div class="wd-phrases" id="wd-phrases">
+					<h2>HTML + JS = ?</h2>
+					<h2>Browser?</h2>
+					<h2>Desktop App?</h2>
+					<h2>Mobile App?</h2>
+					<h2>Game?</h2>
+					<h2>Anything Eles?</h2>
+					<h2>Hello World</h2>
+					<h2>Its WDAPP<font style="font-size:20px">(Ctrl+Shift+D)</font>.</h2>
+				</div>
+			</div>
+		</div>
     </body>
 </html>
