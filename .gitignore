@@ -2,3 +2,5 @@
 *.dcu
 __history
 *.identcache
+*.drc
+*.map
