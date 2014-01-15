@@ -917,7 +917,11 @@ var
     end
     else begin
       WindowStyle := WindowStyle or SWP_NOMOVE;
-    end;    
+    end;
+
+    SetWindowPos(browserHandle, 0, posX, posY,
+                args.getInt(0), args.GetInt(1),
+                windowStyle);
   end;
 begin
   Result := false;
