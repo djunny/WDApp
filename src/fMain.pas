@@ -175,22 +175,108 @@ var
   BrowserList : TObjectHash;
 
 
+
+procedure drawRound(RootWND:THandle);
+var
+  hr : thandle;
+  BrowserRect : TRect;
+begin
+  //draw round
+  Windows.getclientRect(RootWND, BrowserRect);
+  hr   := CreateRoundRectRgn(1, 1, BrowserRect.Right-BrowserRect.Left-2, BrowserRect.Bottom-BrowserRect.Top-2, 20, 20);
+  setwindowrgn(rootWND, hr, true);
+end;
+
+
 function BrowserWindowNewProc(hHwnd, Msg, wParam, lParam: LongWORD): LongInt; stdcall;
 var
   id : String;
   browserInfo : TWDBrowserInfo;
+  //nchittest
+  function NCHITTEST():LongInt;
+  const
+    EDGEDETECT = 20;
+  var
+    deltaRect: TRect;
+    BoundsRect: TRect;
+    XPos,YPos : integer;
+  begin
+    GetWIndowRect(hHwnd, BoundsRect);
+    XPos := Loword(lParam);
+    YPos := HiWord(lParam);
+    result := -1;
+    with deltaRect do 
+    begin
+      Left := XPos - BoundsRect.Left;
+      Right := BoundsRect.Right - XPos;
+      Top := YPos - BoundsRect.Top;
+      Bottom := BoundsRect.Bottom - YPos;
+      if (Top<EDGEDETECT)and(Left<EDGEDETECT) then
+        Result := HTTOPLEFT
+      else if (Top<EDGEDETECT)and(Right<EDGEDETECT) then
+        Result := HTTOPRIGHT
+      else if (Bottom<EDGEDETECT)and(Left<EDGEDETECT) then
+        Result := HTBOTTOMLEFT
+      else if (Bottom<EDGEDETECT)and(Right<EDGEDETECT) then
+        Result := HTBOTTOMRIGHT
+      else if (Top<EDGEDETECT) then
+        Result := HTTOP
+      else if (Left<EDGEDETECT) then
+        Result := HTLEFT
+      else if (Bottom<EDGEDETECT) then
+        Result := HTBOTTOM
+      else if (Right<EDGEDETECT) then
+        Result := HTRIGHT;
+    end;
+  end;
+  //get min / max info 
+  function GETMAXINFO():LongInt;
+  var
+    maxInfo : PMinMaxInfo;
+  begin
+    maxInfo := PMinMaxInfo(lParam);
+    with maxInfo^ do
+    begin
+      ptMaxSize.X      := Screen.WorkAreaWidth;        {Width when maximized}
+      ptMaxSize.Y      := Screen.WorkAreaHeight;       {Height when maximized}
+      ptMaxPosition.X  := 0;                           {Left position when maximized}
+      ptMaxPosition.Y  := 0;                           {Top position when maximized}
+      ptMinTrackSize.X := 0;                           {Minimum width}
+      ptMinTrackSize.Y := 0;                           {Minimum height}
+      ptMaxTrackSize.X := Screen.WorkAreaWidth;        {Maximum width}
+      ptMaxTrackSize.Y := Screen.WorkAreaHeight;       {Maximum height}
+    end;
+    Result := 0;
+  end;
 begin
   id          := IntToStr(hHwnd);
   //@todo may be there is not safe for hash list
-  browserInfo := TWDBrowserInfo(BrowserList[id]);
-  // call old wndproc
-  if(Assigned(browserInfo))
-    AND (browserInfo <> nil)then
+  if(Assigned(BrowserList))
+    AND(BrowserList<>Nil) then
   begin
-    Result := CallWindowProc(browserInfo.OldWndProc, hHwnd, Msg, wParam, lParam);
+    browserInfo := TWDBrowserInfo(BrowserList[id]);
+
+    case Msg of
+      WM_NCHITTEST:
+      begin
+        result := NCHITTEST;
+        exit;
+      end;
+      WM_GETMINMAXINFO:
+      begin
+        result := GETMAXINFO;
+        exit;
+      end;
+    end;  
+
+    // call old wndproc
+    if(Assigned(browserInfo))
+      AND (browserInfo <> nil)then
+    begin
+      Result := CallWindowProc(browserInfo.OldWndProc, hHwnd, Msg, wParam, lParam);
+    end;
   end;
 end;
-
 
 procedure TMainForm.actChromeDevToolExecute(Sender: TObject);
 var
@@ -461,6 +547,7 @@ var
   newPanel    : TCefPanel;
   idStr       : String;
   BrowserInfo : TWDBrowserInfo;
+  
 begin
   if(crm.Browser<>Nil)
     AND(browser.Identifier<>crm.Browser.Identifier)then
@@ -481,10 +568,14 @@ begin
     //set transparent
     windowStyle := GetWindowLong(rootWND, GWL_EXSTYLE);
     SetWindowLong(rootWND, GWL_EXSTYLE, windowStyle or WS_EX_TRANSPARENT);
+
+    //draw Round
+    //drawRound(rootWND);
     //set topmost and redraw frame
     SetWindowPos(rootWND, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE
                                                  or SWP_NOZORDER or SWP_FRAMECHANGED
                                                  or SWP_DRAWFRAME);
+
     // add browser in HashMap
     BrowserInfo            := TWDBrowserInfo.Create;
     // get old Wndproc
@@ -719,6 +810,7 @@ begin
   end;
   msg.Result := 0;                                   {Tell windows you have changed minmaxinfo}
   inherited;
+  //drawRound(handle);
 end;
 
 
@@ -825,11 +917,7 @@ var
     end
     else begin
       WindowStyle := WindowStyle or SWP_NOMOVE;
-    end;
-
-    SetWindowPos(browserHandle, 0, posX, posY,
-                args.getInt(0), args.GetInt(1),
-                windowStyle);
+    end;    
   end;
 begin
   Result := false;
@@ -857,11 +945,18 @@ begin
         end;
         LastMaxTime := getTickCount;
       end;
+      
+      //draw Round
+      //drawRound(browserHandle);
+      
       Result := true;
     end;
     2://min
     begin
       PostMessage(browserHandle, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+      
+      //draw Round
+      //drawRound(browserHandle);
       Result := true;
     end;
     3://close
@@ -876,7 +971,10 @@ begin
     end;
     5://resize(width, height, centerwindow)
     begin
-      DoWindowResize;
+      DoWindowResize;    
+      
+      //draw Round
+      //drawRound(browserHandle);
       result := true;
     end
     else begin
