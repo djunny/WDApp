@@ -91,23 +91,21 @@
 	
 	//window has 1px border(resize) must set color;
 	$e.windowColor(colorToHex($('.window').css('borderLeftColor')));
-	//window resize and set in screen center
-	$e.windowResize(760, 500, true);
-	
-	//index page
-	$("#wd-phrases > h2").lettering('words').children("span").lettering().children("span").lettering();
 	
 	//binding caption button action
 	$('.caption *[data-act]').on('click', function(){
 		var act = $(this).data('act');
 		switch(act){
+			case 'home':
 			case 'demo':
-				$('.content').load('demo.htm');
+				$('#content').load('include/'+act+'.htm');
 			break;
 			case 'toggleSkin':
 				//toggle skin
 				$('.window').toggleClass('flat');
+				//reset border color
+				$e.windowColor(colorToHex($('.window').css('borderLeftColor')));
 			break;
 		}
-	});
+	}).eq(0).trigger('click');
 });

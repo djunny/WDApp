@@ -34,5 +34,7 @@ window.external = {
 </div>
 
 <script>
-window.external.windowResize(860, 600, true);
+(function(window){
+	window.external.windowResize(860, 600, false);
+})(this);
 </script>
