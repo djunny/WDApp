@@ -12,12 +12,15 @@ WDApp(HTML5 application framework)
  you can use HTML + javscript to develop native applcation.
  
  it is simple to add navtive method, and use cef single or multi process mode.
- 
+
+ScreenShot
+=====
+![2014-01-14](https://raw.github.com/djunny/WDApp/master/screenshot/2014-01-14.jpg)
 
 Developer environment
 =====
  
-  Delphi Xe+
+  Test On Delphi XE
 
 
 

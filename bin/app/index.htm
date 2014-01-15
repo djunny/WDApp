@@ -16,6 +16,35 @@
 		.caption .toolbar{position:absolute;top:-4px;right:100px}
 		.flat .caption .toolbar{top:3px;}
 		.grid .row{margin-top:0!important}
+		
+		#background {
+			background: url('./style/foreground.png') 5% 5%, url('./style/midground.png') 50% 50%, url('./style/background.png') 90% 110%;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			position: absolute;
+			-webkit-animation: sky 120s infinite linear;
+		}
+		@-webkit-keyframes sky {
+			from {
+				top: -9999px;
+				left: -8888px;
+			}
+			50% {
+				top: -4999px;
+				left: -3888px;
+			}
+			to {
+				top: 0;
+				left: 0px;
+			}
+		}
+		/*
+		#experiment:hover #background {
+			left: -9999px;
+		}
+		
 		</style>
 		<link rel='stylesheet' href='./style/component.css' type='text/css' media='screen' />
     </head>
@@ -33,7 +62,9 @@
 				<button class="btn-max"></button>
 				<button class="btn-close"></button>
 			</div>
-			<div class="content" id="content"></div>
+			<div class="content" id="content">
+			
+			</div>
 		</div>
     </body>
 </html>

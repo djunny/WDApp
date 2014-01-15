@@ -1,4 +1,7 @@
-
+<div class="experiment">
+    <div id="background">
+	</div>
+</div>
 <div class="wd-phrases" id="wd-phrases">
 	<h2>HTML + JS = ?</h2>
 	<h2>Browser?</h2>
@@ -10,11 +13,11 @@
 	<h2>Its WDAPP<font style="font-size:20px">(Ctrl+Shift+D)</font>.</h2>
 </div>
 
-
 <script>
 (function(window){
 	//window resize and set in screen center
-	window.external.windowResize(760, 500, true);
+	window.external.windowResize(760, 300, true);
+	$('.experiment').attr('id', 'experiment');
 	//index page
 	$("#wd-phrases > h2").lettering('words').children("span").lettering().children("span").lettering();
 })(this);
