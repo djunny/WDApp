@@ -1,0 +1,70 @@
+<html><head>
+    	<meta charset="utf-8" />
+        <title>
+            WDApp Index
+        </title>
+		<link rel="stylesheet" type="text/css" href="./metro/metro-bootstrap.min.css">
+		<link rel='stylesheet' href='./metro/scrollbar.css' type='text/css' media='screen' />
+		<script src="./js/jquery.1.10.js"></script>
+		<script src="./metro/metro.min.js"></script>
+		<script src="./js/letterjs.js"></script>
+		<script src="./js/common.js"></script>
+		<style>
+		body{overflow:hidden;min-width:200px;}
+		.page{height:100%!important}
+		.content{display:block;background:#000;color:#EEE;position:absolute!important;top:32px!important;left:0px;right:0px;bottom:0px;overflow:auto;padding:0px!important;min-height:auto!important}
+		.caption .toolbar{position:absolute;top:-4px;right:100px}
+		.flat .caption .toolbar{top:3px;}
+		.grid .row{margin-top:0!important}
+		
+		#background {
+			background: url('./style/foreground.png') 5% 5%, url('./style/midground.png') 50% 50%, url('./style/background.png') 90% 110%;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			position: absolute;
+			-webkit-animation: sky 120s infinite linear;
+		}
+		@-webkit-keyframes sky {
+			from {
+				top: -9999px;
+				left: -8888px;
+			}
+			50% {
+				top: -4999px;
+				left: -3888px;
+			}
+			to {
+				top: 0;
+				left: 0px;
+			}
+		}
+		/*
+		#experiment:hover #background {
+			left: -9999px;
+		}
+		
+		</style>
+		<link rel='stylesheet' href='./style/component.css' type='text/css' media='screen' />
+    </head>
+    <body class="metro">
+    	<div class="window flat container page">
+			<div class="caption">
+				<span class="icon icon-windows"></span>
+				<div class="title">WDApp Main Window(Drag Me)</div>
+				<div class="toolbar">
+					<a class="image-button primary fg-white image-left" data-act="home"><i class="icon-home bg-cobalt fg-white"></i>Home</a>
+					<a class="image-button bg-darkGreen fg-white image-left" data-act="demo"><i class="icon-spades bg-green fg-white"></i>Demo</a>
+					<a class="image-button danger image-left" data-act="toggleSkin"><i class="icon-layers bg-red"></i>ToggleSkin</a>
+				</div>
+				<button class="btn-min"></button>
+				<button class="btn-max"></button>
+				<button class="btn-close"></button>
+			</div>
+			<div class="content" id="content">
+			
+			</div>
+		</div>
+    </body>
+</html>
