@@ -6,7 +6,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ceflib, cefvcl, Buttons, ActnList, Menus, ComCtrls,
-  ExtCtrls;
+  ExtCtrls, AppEvnts, XPMan;
 
 const
   WM_BACKGROUND = WM_USER + $100;
@@ -53,6 +53,7 @@ type
     VisitDOM1: TMenuItem;
     SaveDialog: TSaveDialog;
     Panel1: TPanel;
+    AppEvent: TApplicationEvents;
     procedure edAddressKeyPress(Sender: TObject; var Key: Char);
     procedure actPrevExecute(Sender: TObject);
     procedure actNextExecute(Sender: TObject);
@@ -91,10 +92,40 @@ type
       StatusType: TCefHandlerStatusType; out Result: Boolean);
     procedure crmTitleChange(Sender: TObject;
       const browser: ICefBrowser; const title: ustring; out Result: Boolean);
+    procedure crmKeyEvent(Sender: TObject; const browser: ICefBrowser; event: TCefHandlerKeyEventType;
+                          code, modifiers: Integer;
+                          isSystemKey, isAfterJavaScript: Boolean;
+                          out Result: Boolean);
+    procedure crmResourceResponse(Sender: TObject; const browser: ICefBrowser;
+                          const url: ustring; const response: ICefResponse;
+                          var filter: ICefBase);
+    procedure crmBeforeBrowse(Sender: TObject; const browser: ICefBrowser;
+                              const frame: ICefFrame;
+                              const request: ICefRequest;
+                              navType: TCefHandlerNavtype;
+                              isRedirect: Boolean;
+                              out Result: Boolean);
+    procedure crmAfterCreated(Sender: TObject;const browser: ICefBrowser);
+    procedure crmContentsSizeChange(Sender: TObject;
+                              const browser: ICefBrowser;
+                              const frame: ICefFrame; width,
+                              height: Integer);
+    procedure crmBeforePopup(Sender: TObject;
+                              const parentBrowser: ICefBrowser;
+                              var popupFeatures: TCefPopupFeatures;
+                              var windowInfo: TCefWindowInfo;
+                              var url: ustring; var client: ICefBase;
+                              out Result: Boolean);
+    procedure crmBeforeClose(Sender: TObject; const browser: ICefBrowser;
+                             out Result: Boolean);
+    procedure AppEventMessage(var Msg: tagMSG; var Handled: Boolean);
+    procedure AppEventShortCut(var Msg: TWMKey; var Handled: Boolean);
   private
     Chrome  : TChromium;
     FLoading: Boolean;
     procedure WMBackground(var msg:Tmessage); message WM_BACKGROUND;
+    Procedure WMGetMinMaxInfo(Var msg: TWMGetMinMaxInfo);message WM_GETMINMAXINFO;
+    procedure WMNCHitTest(var Message: TWMNCHitTest); message WM_NCHITTEST;
   end;
 
   TCefStreamDownloadHandler = class(TCefDownloadHandlerOwn)
@@ -116,11 +147,12 @@ var
 implementation
 
 uses
-  uConst, uCommon, uScheme, uWDAppCef;
+  uConst, uCommon, uScheme, uhashes, uWDAppCef;
 
 {$R *.dfm}
 
 type
+  //external handler
   TWDAppExternal = class(TExternalHandler)
   protected
     function Execute(const name: ustring; const obj: ICefv8Value;
@@ -128,6 +160,12 @@ type
       var exception: ustring): Boolean; override;
   public
     constructor Create(); override;
+  end;
+
+  //browser info
+  TWDBrowserInfo = class
+    Browser    : ICefBrowser;
+    OldWndProc : Pointer;
   end;
 
 var
@@ -152,7 +190,99 @@ var
     'windowResize'
   );
   ContentHandler : TCustomV8ContextHandler;
+  //Browser List
+  BrowserList : TObjectHash;
 
+
+function BrowserWindowNewProc(hHwnd, Msg, wParam, lParam: LongWORD): LongInt; stdcall;
+var
+  id : String;
+  browserInfo : TWDBrowserInfo;
+  //nchittest
+  function NCHITTEST():LongInt;
+  const
+    EDGEDETECT = 20;
+  var
+    deltaRect: TRect;
+    BoundsRect: TRect;
+    XPos,YPos : integer;
+  begin
+    GetWIndowRect(hHwnd, BoundsRect);
+    XPos := Loword(lParam);
+    YPos := HiWord(lParam);
+    result := -1;
+    with deltaRect do
+    begin
+      Left := XPos - BoundsRect.Left;
+      Right := BoundsRect.Right - XPos;
+      Top := YPos - BoundsRect.Top;
+      Bottom := BoundsRect.Bottom - YPos;
+      if (Top<EDGEDETECT)and(Left<EDGEDETECT) then
+        Result := HTTOPLEFT
+      else if (Top<EDGEDETECT)and(Right<EDGEDETECT) then
+        Result := HTTOPRIGHT
+      else if (Bottom<EDGEDETECT)and(Left<EDGEDETECT) then
+        Result := HTBOTTOMLEFT
+      else if (Bottom<EDGEDETECT)and(Right<EDGEDETECT) then
+        Result := HTBOTTOMRIGHT
+      else if (Top<EDGEDETECT) then
+        Result := HTTOP
+      else if (Left<EDGEDETECT) then
+        Result := HTLEFT
+      else if (Bottom<EDGEDETECT) then
+        Result := HTBOTTOM
+      else if (Right<EDGEDETECT) then
+        Result := HTRIGHT;
+    end;
+  end;
+  //get min / max info
+  function GETMAXINFO():LongInt;
+  var
+    maxInfo : PMinMaxInfo;
+  begin
+    maxInfo := PMinMaxInfo(lParam);
+    with maxInfo^ do
+    begin
+      ptMaxSize.X      := Screen.WorkAreaWidth;        {Width when maximized}
+      ptMaxSize.Y      := Screen.WorkAreaHeight;       {Height when maximized}
+      ptMaxPosition.X  := 0;                           {Left position when maximized}
+      ptMaxPosition.Y  := 0;                           {Top position when maximized}
+      ptMinTrackSize.X := 0;                           {Minimum width}
+      ptMinTrackSize.Y := 0;                           {Minimum height}
+      ptMaxTrackSize.X := Screen.WorkAreaWidth;        {Maximum width}
+      ptMaxTrackSize.Y := Screen.WorkAreaHeight;       {Maximum height}
+    end;
+    Result := 0;
+  end;
+begin
+  id          := IntToStr(hHwnd);
+  //@todo may be there is not safe for hash list
+  if(Assigned(BrowserList))
+    AND(BrowserList<>Nil) then
+  begin
+    browserInfo := TWDBrowserInfo(BrowserList[id]);
+
+    case Msg of
+      WM_NCHITTEST:
+      begin
+        result := NCHITTEST;
+        exit;
+      end;
+      WM_GETMINMAXINFO:
+      begin
+        result := GETMAXINFO;
+        exit;
+      end;
+    end;
+
+    // call old wndproc
+    if(Assigned(browserInfo))
+      AND (browserInfo <> nil)then
+    begin
+      Result := CallWindowProc(browserInfo.OldWndProc, hHwnd, Msg, wParam, lParam);
+    end;
+  end;
+end;
 
 procedure TMainForm.actCloseDevToolsExecute(Sender: TObject);
 begin
@@ -324,6 +454,182 @@ begin
     chrome.Browser.ZoomLevel := 0;
 end;
 
+procedure TMainForm.AppEventMessage(var Msg: tagMSG; var Handled: Boolean);
+var
+  i  : integer;
+begin
+  case Msg.message of
+    //ctrl + mousewheel : scroll to zoom
+    WM_MOUSEWHEEL:
+    begin
+      if ((GetKeyState(VK_CONTROL) and $8000)<> 0)then
+      begin
+        i := msg.wParam;
+        Handled := true;
+        if i > 120 then
+        begin
+          i := 5;
+        end
+        else begin
+          i := -5;
+        end;
+
+        if(CefCurrentlyOn(TID_UI)) then
+        begin
+          Chrome.Browser.ZoomLevel := Chrome.Browser.ZoomLevel+(i/10);
+        end
+        else begin
+        end;
+      end;
+    end;
+    //
+    WM_ERASEBKGND:
+    begin
+      if Not(csDesigning in ComponentState) then Handled := true;
+    end;
+    WM_MOUSEMOVE:
+    begin
+    end;
+    WM_SYSCOMMAND:
+    begin
+      OutputDebugString(PChar('syscommand'));
+    end;
+  end;
+end;
+
+procedure TMainForm.AppEventShortCut(var Msg: TWMKey; var Handled: Boolean);
+var
+  KeyExists,i        : Integer;
+  KCtrl,kMenu,kSHift : Integer;
+begin
+  KCtrl  := GetKeyState(VK_CONTROL) and $8000;
+  kMenu  := GetKeyState(VK_MENU)    and $8000;
+  kSHift := GetKeyState(VK_SHIFT)   and $8000;
+  if(KCtrl<>0)AND(kSHift<>0)then//ctrl+shift
+  begin
+    //ctrl + shift + d : toggle debug mode
+    if lowercase(chr(msg.charCode)) = 'd' then
+    begin
+      if Panel1.Visible then
+      begin
+        self.Menu := Nil;
+        StatusBar.Visible := false;
+        Panel1.Visible := false;
+        self.BorderStyle := bsNone;
+      end
+      else begin
+        self.Menu := MainMenu;
+        StatusBar.Visible := true;
+        Panel1.Visible := true;
+        self.BorderStyle := bsSizeable;
+      end;
+    end;
+  end
+  else if(KCtrl<>0)AND(kMenu<>0)then//ctrl+alt
+  begin
+
+  end
+  else if(kSHift<>0)then
+  begin
+
+  end
+  else if(KCtrl<>0)then
+  begin
+
+  end
+  else if (kMenu<>0) then
+  begin
+
+  end
+  else if (0-KCtrl-KMenu-Kshift=0) then
+  begin
+
+  end;
+end;
+
+procedure TMainForm.crmBeforePopup(Sender: TObject;
+  const parentBrowser: ICefBrowser; var popupFeatures: TCefPopupFeatures;
+  var windowInfo: TCefWindowInfo; var url: ustring; var client: ICefBase;
+  out Result: Boolean);
+begin
+//
+end;
+
+procedure TMainForm.crmBeforeClose(Sender: TObject;
+  const browser: ICefBrowser; out Result: Boolean);
+begin
+//
+end;
+
+procedure TMainForm.crmContentsSizeChange(Sender: TObject;
+  const browser: ICefBrowser; const frame: ICefFrame; width, height: Integer);
+begin
+//
+
+  SendMessage(browser.GetWindowHandle, WM_SIZE, 0, 0);
+end;
+
+procedure TMainForm.crmAfterCreated(Sender: TObject;
+  const browser: ICefBrowser);
+var
+  rootWND     : HWND;
+  ParentRect  : TRect;
+  windowStyle : integer;
+  idStr       : String;
+  BrowserInfo : TWDBrowserInfo;
+begin
+  if(Chrome.Browser<>Nil)then
+  begin
+    rootWND     := GetBrowserWindow(browser);
+
+    //set no caption window
+    windowStyle := GetWindowLong(rootWND, GWL_STYLE);
+    //@todo how to check developer tools
+    if Pos('', browser.MainFrame.Url) =0 then
+    begin
+      {
+      windowStyle := windowStyle and not WS_CAPTION;
+      windowStyle := windowStyle and not WS_SYSMENU;
+      windowStyle := windowStyle and not WS_THICKFRAME;
+      windowStyle := windowStyle and not WS_MINIMIZE;
+      windowStyle := windowStyle and not WS_MAXIMIZEBOX;
+      windowStyle := windowStyle and not WS_DLGFRAME;
+      windowStyle := windowStyle and not WS_BORDER;
+      }
+    end;
+    SetWindowLong(rootWND, GWL_STYLE, windowStyle);
+
+    //set transparent
+    windowStyle := GetWindowLong(rootWND, GWL_EXSTYLE);
+    SetWindowLong(rootWND, GWL_EXSTYLE, windowStyle or WS_EX_TRANSPARENT);
+
+    //set topmost and redraw frame
+    SetWindowPos(rootWND, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE
+                                                 or SWP_NOZORDER or SWP_FRAMECHANGED
+                                                 or SWP_DRAWFRAME);
+
+    // add browser in HashMap
+    BrowserInfo            := TWDBrowserInfo.Create;
+    // get old Wndproc
+    BrowserInfo.OldWndProc := Pointer(GetWindowLong(rootWND, GWL_WNDPROC));
+    // get ICefBrowser interface
+    BrowserInfo.Browser    := browser;
+    // rootWND is key of BrowserList
+    idStr                  := IntToStr(RootWND);
+    BrowserList[idstr]     := BrowserInfo;
+    //replace wndproc
+    SetWindowLong(rootWND, GWL_WNDPROC, Integer(@BrowserWindowNewProc));
+  end;
+end;
+
+procedure TMainForm.crmBeforeBrowse(Sender: TObject;
+  const browser: ICefBrowser; const frame: ICefFrame;
+  const request: ICefRequest; navType: TCefHandlerNavtype; isRedirect: Boolean;
+  out Result: Boolean);
+begin
+//
+end;
+
 procedure TMainForm.crmAddressChange(Sender: TObject;
   const browser: ICefBrowser; const frame: ICefFrame; const url: ustring);
 begin
@@ -373,6 +679,48 @@ begin
     Caption := title;
 end;
 
+
+procedure TMainForm.crmKeyEvent(Sender: TObject; const browser: ICefBrowser; event: TCefHandlerKeyEventType;
+          code, modifiers: Integer; isSystemKey, isAfterJavaScript: Boolean; out Result: Boolean);
+var
+  KCtrl,kMenu,kSHift : Integer;
+begin
+  KCtrl  := GetKeyState(VK_CONTROL) and $8000;
+  kMenu  := GetKeyState(VK_MENU)    and $8000;
+  kSHift := GetKeyState(VK_SHIFT)   and $8000;
+  if event = KEYEVENT_RAWKEYDOWN then
+  begin
+    if isAfterJavaScript then
+    begin
+        //f5
+      if((code = VK_F5)
+           OR
+           //ctrl+r
+           ((LowerCase(Chr(code))='r')and(KCtrl<>0))
+         )then
+      begin
+        browser.Reload;
+        result := true;
+      end
+      else if code = VK_F12 then
+      begin
+        browser.ShowDevTools;
+      end;
+    end;
+
+  end;
+end;
+
+procedure TMainForm.crmResourceResponse(Sender: TObject; const browser: ICefBrowser;
+                          const url: ustring; const response: ICefResponse;
+                          var filter: ICefBase);
+begin
+  if pos('text/html', response.GetHeader('Content-Type'))>0 then
+  begin
+    filter := TCustomFilter.Create;
+  end;
+end;
+
 procedure TMainForm.edAddressKeyPress(Sender: TObject; var Key: Char);
 begin
   if Key = #13 then
@@ -396,6 +744,56 @@ begin
   self.Color := msg.WParam;
 end;
 
+Procedure TMainForm.WMGetMinMaxInfo(Var msg: TWMGetMinMaxInfo);
+begin
+  with msg.MinMaxInfo^ do
+  begin
+    ptMaxSize.X      := Screen.WorkAreaWidth;        {Width when maximized}
+    ptMaxSize.Y      := Screen.WorkAreaHeight;       {Height when maximized}
+    ptMaxPosition.X  := 0;                           {Left position when maximized}
+    ptMaxPosition.Y  := 0;                           {Top position when maximized}
+    ptMinTrackSize.X := 0;                           {Minimum width}
+    ptMinTrackSize.Y := 0;                           {Minimum height}
+    ptMaxTrackSize.X := Screen.WorkAreaWidth;        {Maximum width}
+    ptMaxTrackSize.Y := Screen.WorkAreaHeight;       {Maximum height}
+  end;
+  msg.Result := 0;                                   {Tell windows you have changed minmaxinfo}
+  inherited;
+  //drawRound(handle);
+end;
+
+procedure TMainForm.WMNCHitTest(var Message: TWMNCHitTest);
+const
+  EDGEDETECT = 10;//adjust to suit yourself
+var
+  deltaRect: TRect;
+begin
+  inherited;
+  if BorderStyle = bsNone then
+    with Message, deltaRect do begin
+      Left := XPos - BoundsRect.Left;
+      Right := BoundsRect.Right - XPos;
+      Top := YPos - BoundsRect.Top;
+      Bottom := BoundsRect.Bottom - YPos;
+      if (Top<EDGEDETECT)and(Left<EDGEDETECT) then
+        Result := HTTOPLEFT
+      else if (Top<EDGEDETECT)and(Right<EDGEDETECT) then
+        Result := HTTOPRIGHT
+      else if (Bottom<EDGEDETECT)and(Left<EDGEDETECT) then
+        Result := HTBOTTOMLEFT
+      else if (Bottom<EDGEDETECT)and(Right<EDGEDETECT) then
+        Result := HTBOTTOMRIGHT
+      else if (Top<EDGEDETECT) then
+        Result := HTTOP
+      else if (Left<EDGEDETECT) then
+        Result := HTLEFT
+      else if (Bottom<EDGEDETECT) then
+        Result := HTBOTTOM
+      else if (Right<EDGEDETECT) then
+        Result := HTRIGHT
+    end;
+end;
+
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
@@ -406,15 +804,22 @@ begin
   CefAddCrossOriginWhitelistEntry(getAppPath('app'), WDAPP_PROTOCOL, '', true);
 
   //create chrome
-  Chrome                 := TChromium.Create(Self);
-  Chrome.Parent          := Self;
-  chrome.Align           := alClient;
-  chrome.OnAddressChange := crmAddressChange;
-  Chrome.OnLoadEnd       := crmLoadEnd;
-  Chrome.OnLoadStart     := crmLoadStart;
-  Chrome.OnStatusMessage := crmStatusMessage;
-  Chrome.OnTitleChange   := crmTitleChange;
-  Chrome.OnContextCreated:= ContentHandler.OnContextCreated;
+  Chrome                      := TChromium.Create(Self);
+  Chrome.Parent               := Self;
+  chrome.Align                := alClient;
+  chrome.OnAddressChange      := crmAddressChange;
+  Chrome.OnLoadEnd            := crmLoadEnd;
+  Chrome.OnLoadStart          := crmLoadStart;
+  Chrome.OnStatusMessage      := crmStatusMessage;
+  Chrome.OnTitleChange        := crmTitleChange;
+  Chrome.OnContextCreated     := ContentHandler.OnContextCreated;
+  Chrome.OnKeyEvent           := crmKeyEvent;
+  chrome.OnResourceResponse   := crmResourceResponse;
+  chrome.OnBeforeBrowse       := crmBeforeBrowse;
+  Chrome.OnAfterCreated       := crmAfterCreated;
+  Chrome.OnBeforePopup        := crmBeforePopup;
+  Chrome.OnContentsSizeChange := crmContentsSizeChange;
+  Chrome.OnBeforeClose        := crmBeforeClose;
   chrome.Load(getAppPath('app'));
 end;
 
@@ -440,12 +845,8 @@ end;
 function TWDAppExternal.Execute(const name: ustring; const obj: ICefv8Value;
       const arguments: TCefv8ValueArray; var retval: ICefv8Value;
       var exception: ustring): Boolean;
-{$J+}
-const LastMaxTime : Integer = -1;
-{$J-}
 var
   messageName   : string;
-  pt            : TPoint;
   browserHandle : THandle;
   argsLength    : integer;
   //resize window
@@ -474,6 +875,7 @@ var
     end;
   end;
 begin
+  result        := false;
   //get message name
   messageName   := name;
   browserHandle := GetBrowserWindow(context.Browser);
@@ -487,18 +889,13 @@ begin
     end;
     1://max
     begin
-      //check time click too fast maybe get restore
-      if GetTickCount - LastMaxTime - 1000 > 0 then
+      //@todo why SendMessage make app crash
+      if IsZoomed(browserHandle) then
       begin
-        //@todo why SendMessage make app crash
-        if IsZoomed(browserHandle) then
-        begin
-          PostMessage(browserHandle, WM_SYSCOMMAND, SC_RESTORE, 0);
-        end
-        else begin
-          PostMessage(browserHandle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
-        end;
-        LastMaxTime := getTickCount;
+        PostMessage(browserHandle, WM_SYSCOMMAND, SC_RESTORE, 0);
+      end
+      else begin
+        PostMessage(browserHandle, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
       end;
       //draw Round
       //drawRound(browserHandle);
@@ -590,8 +987,9 @@ end;
 *)
 
 initialization
+  // create browserList
+  BrowserList              := TObjectHash.Create;
   ContentHandler := TCustomV8ContextHandler.Create;
-
   // register by extension code
   // CefRegisterExtension('v8/'+WDAPP_EXTERNAL, buildExtensionCode, TWDAppExternal.Create);
   //register by contextCreated
@@ -600,4 +998,5 @@ initialization
 
 finalization
   FreeAndNil(ContentHandler);
+  FreeAndNil(BrowserList);
 end.

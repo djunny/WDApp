@@ -28,6 +28,14 @@ type
   end;
   TExternalClass = class of TExternalHandler;
 
+
+  //cef external filter
+  TCustomFilter = class(TCefContentFilterOwn)
+  public
+    procedure ProcessData(const Data: Pointer; Size: Integer;
+        var SubstituteData: ICefStreamReader); override;
+  end;
+
 var
    ExternalClass : TExternalClass;
 
@@ -103,6 +111,15 @@ begin
   end;
 end;
 
+procedure TCustomFilter.ProcessData(const Data: Pointer; Size: Integer;
+        var SubstituteData: ICefStreamReader);
+var
+  s : string;
+begin
+  s := string(PANsiChar(data));
+  OutputDebugString(PChar(s));
+
+end;
 
 initialization
 

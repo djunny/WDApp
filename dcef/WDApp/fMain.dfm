@@ -1,9 +1,10 @@
 object MainForm: TMainForm
   Left = 276
   Top = 194
+  BorderStyle = bsNone
   Caption = 'Chromium Embedded'
-  ClientHeight = 439
-  ClientWidth = 730
+  ClientHeight = 497
+  ClientWidth = 746
   Color = clBtnFace
   TransparentColor = True
   TransparentColorValue = clFuchsia
@@ -12,29 +13,33 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  Menu = MainMenu
+  Padding.Right = 1
+  Padding.Bottom = 1
   OldCreateOrder = False
+  Position = poDesktopCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 420
-    Width = 730
+    Top = 477
+    Width = 745
     Height = 19
     Panels = <>
     SimplePanel = True
+    Visible = False
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 730
+    Width = 745
     Height = 22
     Align = alTop
     Caption = 'Panel1'
     TabOrder = 1
+    Visible = False
     DesignSize = (
-      730
+      745
       22)
     object SpeedButton1: TSpeedButton
       Left = 0
@@ -67,17 +72,18 @@ object MainForm: TMainForm
       Caption = 'R'
     end
     object SpeedButton5: TSpeedButton
-      Left = 707
+      Left = 722
       Top = 0
       Width = 23
       Height = 22
       Action = actGoTo
       Anchors = [akTop, akRight]
+      ExplicitLeft = 707
     end
     object edAddress: TEdit
       Left = 95
       Top = 0
-      Width = 610
+      Width = 625
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
@@ -211,5 +217,11 @@ object MainForm: TMainForm
     Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 624
     Top = 176
+  end
+  object AppEvent: TApplicationEvents
+    OnMessage = AppEventMessage
+    OnShortCut = AppEventShortCut
+    Left = 624
+    Top = 248
   end
 end
